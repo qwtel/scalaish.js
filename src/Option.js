@@ -5,22 +5,28 @@ var Option, Some, None;
 
 Option = (function () {
 
+  /**
+   * An Option factory which returns `None` in a manner consistent with
+   * the collections hierarchy.
+   */
   Option.empty = None;
 
   /**
+   * An Option factory which creates Some(x) if the argument is not null,
+   *  and None if it is null.
+   *
    * @template A
-   * @param x {A}
-   * @returns {*}
+   * @param x {A} the value
    * @constructor
-   * @returns {Option}
+   * @return {Option.<A>} Some(value) if value != null, None if value == null
    */
   function Option(x) {
     if (!__isConstructor.call(this, Option)) {
       if (x == null) {
-        return new None();
+        return None();
       }
       else {
-        return new Some(x);
+        return Some(x);
       }
     } else {
       // TODO: find out by who this gets called, prevent direct call, allow sub class
@@ -30,12 +36,14 @@ Option = (function () {
 
   /**
    * Returns true if the option is $none, false otherwise.
+   * @return {boolean}
    */
   Option.prototype.isEmpty = function () {
   };
 
   /**
    * Returns true if the option is an instance of $some, false otherwise.
+   * @return {boolean}
    */
   Option.prototype.isDefined = function () {
     return !this.isEmpty()
@@ -45,6 +53,7 @@ Option = (function () {
    * Returns the option's value.
    * @note The option must be nonEmpty.
    * @throws Predef.NoSuchElementException if the option is empty.
+   * @return {A}
    */
   Option.prototype.get = function () {
   };
@@ -53,7 +62,8 @@ Option = (function () {
    * Returns the option's value if the option is nonempty, otherwise
    * return the result of evaluating `def`.
    *
-   * @param def the default expression.
+   * @param def {A|function(): A} the default expression.
+   * @return {A}
    */
   Option.prototype.getOrElse = function (def) {
     if (this.isEmpty()) {
@@ -68,6 +78,7 @@ Option = (function () {
    * or `null` if it is empty.
    * Although the use of null is discouraged, code written to use
    * $option must often interface with code that expects and returns nulls.
+   * @return {A|null}
    */
   Option.prototype.orNull = function () {
     return this.getOrElse(null)
@@ -78,12 +89,14 @@ Option = (function () {
    * value if this $option is nonempty.
    * Otherwise return $none.
    *
-   *  @note This is similar to `flatMap` except here,
-   *  $f does not need to wrap its result in an $option.
+   * @note This is similar to `flatMap` except here,
+   * $f does not need to wrap its result in an $option.
    *
-   *  @param  f   the function to apply
-   *  @see flatMap
-   *  @see foreach
+   * @template B
+   * @param  f {function(A): B} the function to apply
+   * @return Option.<B>
+   * @see flatMap
+   * @see foreach
    */
   Option.prototype.map = function (f) {
     if (this.isEmpty()) {
@@ -95,15 +108,21 @@ Option = (function () {
 
   /**
    * Returns the result of applying $f to this $option's
-   *  value if the $option is nonempty.  Otherwise, evaluates
-   *  expression `ifEmpty`.
+   * value if the $option is nonempty.  Otherwise, evaluates
+   * expression `ifEmpty`.
    *
-   *  @note This is equivalent to `$option map f getOrElse ifEmpty`.
+   * @note This is equivalent to `$option map f getOrElse ifEmpty`.
    *
-   *  @param  ifEmpty the expression to evaluate if empty.
-   *  @param  f       the function to apply if nonempty.
+   * @template B
+   * @param f {function(A): B} the function to apply if nonempty.
+   * @return {function(B|function(): B): B}
    */
   Option.prototype.fold = function (f) {
+    // TODO: Better way to document this / better way for partial application?
+    /**
+     *  @param ifEmpty {B|function(): B} the expression to evaluate if empty.
+     *  @return {B}
+     */
     return function (ifEmpty) {
       if (this.isEmpty()) {
         return __result(ifEmpty)
@@ -120,9 +139,11 @@ Option = (function () {
    * Slightly different from `map` in that $f is expected to
    * return an $option (which could be $none).
    *
-   *  @param  f   the function to apply
-   *  @see map
-   *  @see foreach
+   * @template B
+   * @param  f {function(A): Option.<B>} the function to apply
+   * @return {Option.<B>}
+   * @see map
+   * @see foreach
    */
   Option.prototype.flatMap = function (f) {
     if (this.isEmpty()) {
@@ -132,20 +153,23 @@ Option = (function () {
     }
   };
 
-  // meh..
-  Option.prototype.flatten = function () {
-    if (this.isEmpty()) {
-      return None()
-    } else {
-      return this.get()
-    }
-  };
+  /*
+   TODO: Not sure what this does
+   Option.prototype.flatten = function () {
+   if (this.isEmpty()) {
+   return None()
+   } else {
+   return this.get()
+   }
+   };
+   */
 
   /**
    * Returns this $option if it is nonempty '''and''' applying the predicate $p to
    * this $option's value returns true. Otherwise, return $none.
    *
-   *  @param  p   the predicate used for testing.
+   * @param  p {function(A): boolean} the predicate used for testing.
+   * @return {Option.<A>}
    */
   Option.prototype.filter = function (p) {
     if (this.isEmpty() || p(this.get())) {
@@ -159,7 +183,8 @@ Option = (function () {
    * Returns this $option if it is nonempty '''and''' applying the predicate $p to
    * this $option's value returns false. Otherwise, return $none.
    *
-   *  @param  p   the predicate used for testing.
+   * @param  p {function(A): boolean} the predicate used for testing.
+   * @return {Option.<A>}
    */
   Option.prototype.filterNot = function (p) {
     if (this.isEmpty() || !p(this.get())) {
@@ -173,52 +198,62 @@ Option = (function () {
 
   // TODO: withFilter 
 
-  /** Tests whether the option contains a given value as an element.
+  /**
+   * Tests whether the option contains a given value as an element.
    *
-   *  @param elem the element to test.
-   *  @return `true` if the option has an element that is equal (as
-   *  determined by `==`) to `elem`, `false` otherwise.
+   * @param elem {A} the element to test.
+   * @return {boolean} `true` if the option has an element that is equal (as
+   * determined by `===`) to `elem`, `false` otherwise.
    */
   Option.prototype.contains = function (elem) {
     // TODO: equals?
     return !this.isEmpty() && this.get() === elem
   };
 
-  /** Returns true if this option is nonempty '''and''' the predicate
+  /**
+   * Returns true if this option is nonempty '''and''' the predicate
    * $p returns true when applied to this $option's value.
    * Otherwise, returns false.
    *
-   *  @param  p   the predicate to test
+   * @param  p {function(A): boolean}  the predicate to test
+   * @return {boolean}
    */
   Option.prototype.exists = function (p) {
     return !this.isEmpty() && p(this.get())
   };
 
-  /** Returns true if this option is empty '''or''' the predicate
+  /**
+   * Returns true if this option is empty '''or''' the predicate
    * $p returns true when applied to this $option's value.
    *
-   *  @param  p   the predicate to test
+   * @param  p {function(A): boolean}  the predicate to test
+   * @return {boolean}
    */
   Option.prototype.forall = function (p) {
     return this.isEmpty() || p(this.get())
   };
 
-  /** Apply the given procedure $f to the option's value,
-   *  if it is nonempty. Otherwise, do nothing.
+  /**
+   * Apply the given procedure $f to the option's value,
+   * if it is nonempty. Otherwise, do nothing.
    *
-   *  @param  f   the procedure to apply.
-   *  @see map
-   *  @see flatMap
+   * @template U
+   * @param  f {function(A): U} the procedure to apply.
+   * @return {U|undefined}
+   * @see map
+   * @see flatMap
    */
   Option.prototype.foreach = function (f) {
-    if (!this.isEmpty()) f(this.get())
+    if (!this.isEmpty()) return f(this.get())
   };
 
   // TODO: collect
 
   /** Returns this $option if it is nonempty,
    *  otherwise return the result of evaluating `alternative`.
-   *  @param alternative the alternative expression.
+   *
+   *  @param alternative {Option.<A>|function(): Option.<A>} the alternative expression.
+   *  @return {Option.<A>}
    */
   Option.prototype.orElse = function (alternative) {
     if (this.isEmpty()) {
@@ -242,6 +277,16 @@ Option = (function () {
 Some = (function (_super) {
   __extends(_super, Some);
 
+  /**
+   * Class `Some[A]` represents existing values of type
+   *  `A`.
+   *
+   * @template A
+   * @param value {A}
+   * @return {Some.<A>}
+   * @constructor
+   * @extends {Option.<A>}
+   */
   function Some(value) {
     if (!__isConstructor.call(this, Some)) {
       return new Some(value)
@@ -251,10 +296,18 @@ Some = (function (_super) {
     }
   }
 
+  /**
+   * @override
+   * @inheritDoc
+   */
   Some.prototype.get = function () {
     return this.value;
   };
 
+  /**
+   * @override
+   * @inheritDoc
+   */
   Some.prototype.isEmpty = function () {
     return false;
   };
@@ -265,6 +318,13 @@ Some = (function (_super) {
 None = (function (_super) {
   __extends(_super, None);
 
+  /**
+   * This case object represents non-existent values.
+   *
+   * @return {None}
+   * @constructor
+   * @extends {Option}
+   */
   function None() {
     if (!__isConstructor.call(this, None)) {
       return new None()
@@ -273,11 +333,19 @@ None = (function (_super) {
     }
   }
 
+  /**
+   * @override
+   * @inheritDoc
+   */
   None.prototype.get = function () {
     // TODO: Custom Exceptions
     throw new Error("None.get");
   };
 
+  /**
+   * @override
+   * @inheritDoc
+   */
   None.prototype.isEmpty = function () {
     return true;
   };
