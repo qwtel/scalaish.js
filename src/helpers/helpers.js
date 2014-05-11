@@ -3,6 +3,7 @@ var __extends = function (parent, child) {
     for (var key in parent) {
         if (parent.hasOwnProperty(key)) child[key] = parent[key];
     }
+
     function ctor() {
         this.constructor = child;
     }
@@ -14,11 +15,11 @@ var __extends = function (parent, child) {
 };
 
 // http://stackoverflow.com/a/1880726/870615
-var __isConstructor = function (clazz) {
+var __isConstructor = function (Clazz) {
     var isConstructor = false;
-    if (this instanceof clazz && !this['__previouslyConstructedBy' + clazz.name]) {
+    if (this instanceof Clazz && !this['__previouslyConstructedBy' + Clazz.name]) {
         isConstructor = true;
-        this['__previouslyConstructedBy' + clazz.name] = true;
+        this['__previouslyConstructedBy' + Clazz.name] = true;
     }
     return isConstructor;
 };

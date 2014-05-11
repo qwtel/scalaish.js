@@ -1,8 +1,7 @@
 "use strict";
-var __extends = require("helpers/helpers").__extends;
-var __isConstructor = require("helpers/helpers").__isConstructor;
-var __isFunction = require("helpers/helpers").__isFunction;
-var __result = require("helpers/helpers").__result;
+var __extends = require("./helpers/helpers").__extends;
+var __isConstructor = require("./helpers/helpers").__isConstructor;
+var __result = require("./helpers/helpers").__result;
 
 // http://www.scala-lang.org/
 var Option, Some, None;
@@ -100,7 +99,7 @@ Option = (function () {
    * @param  f {function(A): B} the function to apply
    * @return Option.<B>
    * @see flatMap
-   * @see foreach
+   * @see forEach
    */
   Option.prototype.map = function (f) {
     if (this.isEmpty()) {
@@ -118,16 +117,16 @@ Option = (function () {
    * @note This is equivalent to `$option map f getOrElse ifEmpty`.
    *
    * @template B
-   * @param f {function(A): B} the function to apply if nonempty.
+   * @param ifEmpty {B|function(): B} the expression to evaluate if empty.
    * @return {function(B|function(): B): B}
    */
-  Option.prototype.fold = function (f) {
+  Option.prototype.fold = function (ifEmpty) {
     // TODO: Better way to document this / better way for partial application?
     /**
-     *  @param ifEmpty {B|function(): B} the expression to evaluate if empty.
      *  @return {B}
+     *  @param f {function(A): B} the function to apply if nonempty.
      */
-    return function (ifEmpty) {
+    return function (f) {
       if (this.isEmpty()) {
         return __result(ifEmpty)
       } else {
@@ -147,7 +146,7 @@ Option = (function () {
    * @param  f {function(A): Option.<B>} the function to apply
    * @return {Option.<B>}
    * @see map
-   * @see foreach
+   * @see forEach
    */
   Option.prototype.flatMap = function (f) {
     if (this.isEmpty()) {
@@ -233,7 +232,7 @@ Option = (function () {
    * @param  p {function(A): boolean}  the predicate to test
    * @return {boolean}
    */
-  Option.prototype.forall = function (p) {
+  Option.prototype.forAll = function (p) {
     return this.isEmpty() || p(this.get())
   };
 
@@ -247,7 +246,7 @@ Option = (function () {
    * @see map
    * @see flatMap
    */
-  Option.prototype.foreach = function (f) {
+  Option.prototype.forEach = function (f) {
     if (!this.isEmpty()) return f(this.get())
   };
 
@@ -342,7 +341,7 @@ None = (function (_super) {
    * @inheritDoc
    */
   None.prototype.get = function () {
-    // TODO: Custom Exceptions
+    // TODO: Exception types
     throw new Error("None.get");
   };
 
