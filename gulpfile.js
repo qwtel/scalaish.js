@@ -19,3 +19,13 @@ gulp.task('cjs', function () {
 });
 
 gulp.task('transpile', ['amd', 'cjs']);
+
+gulp.task('compile', ['transpile']);
+
+gulp.task('watch', ['compile'], function() {
+  gulp.watch('./src/**/*.js', ['transpile']);
+});
+
+gulp.task('development', ['watch']);
+
+gulp.task('default', ['development']);
