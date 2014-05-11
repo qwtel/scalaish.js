@@ -16,4 +16,4 @@ Currently only the `Option` Type works, so "Option.js" would be a better title. 
 
 ### Roadmap
 
-It would be nice to have scala-ish collections, so one could use `List(1, 2, 3)` etc directly in JS. In order to achieve this one has to wrap his head around the Scala collections library and find a way to deal with it's heavy use of traits. 
+It would be nice to have scala-ish collections, so one could use `List(1, 2, 3)` etc directly in JS. In order to achieve this one has to wrap his head around the Scala collections library and find a way to deal with its heavy use of traits. 
