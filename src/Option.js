@@ -1,4 +1,4 @@
-import {__extends, __isConstructor, __result} from "./helpers/helpers";
+import {__extends, __isConstructor, __result} from "helpers/helpers";
 
 // http://www.scala-lang.org/
 var Option, Some, None;
@@ -9,7 +9,7 @@ Option = (function () {
    * An Option factory which returns `None` in a manner consistent with
    * the collections hierarchy.
    */
-  Option.empty = None;
+  Option.empty = function() { return None() };
 
   /**
    * An Option factory which creates Some(x) if the argument is not null,

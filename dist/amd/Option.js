@@ -1,5 +1,5 @@
 define("Option",
-  ["./helpers/helpers","exports"],
+  ["helpers/helpers","exports"],
   function(__dependency1__, __exports__) {
     "use strict";
     var __extends = __dependency1__.__extends;
@@ -15,7 +15,7 @@ define("Option",
        * An Option factory which returns `None` in a manner consistent with
        * the collections hierarchy.
        */
-      Option.empty = None;
+      Option.empty = function() { return None() };
 
       /**
        * An Option factory which creates Some(x) if the argument is not null,
