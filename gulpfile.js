@@ -1,4 +1,5 @@
 var gulp = require('gulp');
+var rjs = require('gulp-requirejs');
 var es6ModuleTranspiler = require("gulp-es6-module-transpiler");
 
 function transpile(to) {
@@ -7,7 +8,6 @@ function transpile(to) {
       type: to
     }))
     .pipe(gulp.dest("./dist/" + to));
-
 }
 
 gulp.task('amd', function () {
@@ -18,11 +18,20 @@ gulp.task('cjs', function () {
   return transpile('cjs')
 });
 
+gulp.task('rjs', ['amd'], function () {
+  return rjs({
+    baseUrl: 'dist/amd',
+    name: 'Option',
+    out: 'scalaish.js'
+  })
+    .pipe(gulp.dest("./dist/amd"));
+});
+
 gulp.task('transpile', ['amd', 'cjs']);
 
 gulp.task('compile', ['transpile']);
 
-gulp.task('watch', ['compile'], function() {
+gulp.task('watch', ['compile'], function () {
   gulp.watch('./src/**/*.js', ['transpile']);
 });
 
