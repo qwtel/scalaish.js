@@ -41,6 +41,33 @@ console.log(!o.isInstanceOf("None"));
 console.log(o.get() === 1);
 console.log(o.map(function(x) { return x + 1}).get() === 2);
 
+import {Random} from './util/Random';
+
+function testRandom(r) {
+  console.log(r.nextInt());
+  var i = 0;
+  var t = r.nextInt();
+
+  while(t !== 31) {
+    t = r.nextInt();
+    if (++i > 1000) {
+      console.error("Unlikely..")
+      break;
+    }
+  }
+  console.log(r.nextNumber());
+  console.log(r.nextGaussian());
+  console.log(r.nextBoolean());
+  console.log(r.nextString(3));
+  console.log(r.nextPrintableChar());
+}
+
+var r = Random();
+testRandom(r);
+
+r = new Random();
+testRandom(r);
+
 /*
 var fooBar = Trait.create(Object.prototype, TFooBar);
 console.log(fooBar.isInstanceOf("Bar"));
