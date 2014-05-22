@@ -1,47 +1,60 @@
-import {Trait} from 'traits';
+import {Trait} from './helpers/Trait';
 
-import {Option, Some, None} from "./Option";
-import {Growable} from "./collection/generic/Growable";
-
-/*
-var TEquality = Trait({
-  equals: Trait.required,
-  differs: function(x) { return !this.equals(x); }
-});
-
-var TMagnitude = Trait.compose(TEquality, Trait({
-  smaller: Trait.required,
-  greater: function(x) { return !this.smaller(x) && this.differs(x) },
-  between: function(min, max) {
-    return min.smaller(this) && this.smaller(max);
+var TFoo = Trait("Foo", {
+  foo: function () {
   }
-}));
+});
+var TBar = Trait("Bar", {
+  bar: function () {
+  }
+});
+var TFooBar = Trait.compose(TFoo, TBar);
 
-function TCircle(center, radius) {
-  return Trait.compose(
-    TMagnitude,
-    TEquality,
-    Trait({
-      center: center,
-      radius: radius,
-      area: function() { return Math.PI * this.radius * this.radius; },
-      equals: function(c) { return c.center === this.center && r.radius === this.radius },
-      smaller: function(c) { return this.radius < c.radius }
-    }));
+function FooBar(x) {
+  return Object.create(FooBar.prototype, Trait.compose(TFooBar, Trait("FooBar", {value: x})))
 }
 
-function Circle(center, radius, rgb) {
-  return Trait.create(Object.prototype, TCircle(center, radius));
-}
-var c = new Circle(0, 1);
-
-console.log(c instanceof Circle);
+var fooBar = FooBar(3);
+/*
+console.log(fooBar.isInstanceOf("Bar"));
+console.log(fooBar.isInstanceOf("Foo"));
+console.log(fooBar.isInstanceOf("Any"));
+console.log(!fooBar.isInstanceOf("Other"));
+console.log(fooBar.hasOwnProperty("foo"));
+console.log(fooBar.hasOwnProperty("bar"));
+console.log(fooBar.value === 3);
+console.log(fooBar.isInstanceOf("FooBar"));
+console.log(fooBar instanceof FooBar);
 */
+
+import {Option, Some, None} from './Option';
+
+var o = Option(1);
+console.log(o instanceof Some);
+console.log(o instanceof Option);
+console.log(!(o instanceof None));
+console.log(o.isInstanceOf("Some"));
+console.log(o.isInstanceOf("Option"));
+console.log(o.isInstanceOf("Any"));
+console.log(!o.isInstanceOf("Other"));
+console.log(!o.isInstanceOf("None"));
+console.log(o.get() === 1);
+console.log(o.map(function(x) { return x + 1}).get() === 2);
 
 /*
-console.log(Some(1).get() === 1);
-console.log(Option(null).isEmpty() === true);
+var fooBar = Trait.create(Object.prototype, TFooBar);
+console.log(fooBar.isInstanceOf("Bar"));
+console.log(fooBar.isInstanceOf("Foo"));
+console.log(fooBar.isInstanceOf("Any"));
+console.log(!fooBar.isInstanceOf("Other"));
+console.log(fooBar.hasOwnProperty("foo"));
+console.log(fooBar.hasOwnProperty("bar"));
 
-console.log(Growable);
+fooBar = Object.create(Object.prototype, TFooBar);
+console.log(fooBar.isInstanceOf("Bar"));
+console.log(fooBar.isInstanceOf("Foo"));
+console.log(fooBar.isInstanceOf("Any"));
+console.log(!fooBar.isInstanceOf("Other"));
+console.log(fooBar.hasOwnProperty("foo"));
+console.log(fooBar.hasOwnProperty("bar"));
 */
-

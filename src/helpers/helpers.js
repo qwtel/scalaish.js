@@ -1,16 +1,23 @@
 // http://coffeescript.org/
 var __extends = function (parent, child) {
+    /*
+    // Do we want this?
     for (var key in parent) {
         if (parent.hasOwnProperty(key)) child[key] = parent[key];
     }
+    */
 
+    /*
     function ctor() {
         this.constructor = child;
     }
 
     ctor.prototype = parent.prototype;
     child.prototype = new ctor();
+    */
+
     child.__super__ = parent.prototype;
+    child.prototype = Object.create(parent.prototype, {});
     return child;
 };
 
