@@ -287,10 +287,12 @@ var TNone = Trait.compose(
 );
 
 function Some(x) {
+  // TODO: Less hacky constructor?
   return Object.create(Some.prototype, Trait.compose(TSome, Trait({value: x})))
 }
 
 function None() {
+  // TODO: Less hacky constructor?
   return Object.create(None.prototype, TNone);
 }
 

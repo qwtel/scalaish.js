@@ -38,7 +38,7 @@ var TTry = Trait("Try", {
   recover: Trait.required,
 
   toOption: function () {
-    this.isSuccess() ? Some(this.get()) : None()
+    return this.isSuccess() ? Some(this.get()) : None()
   },
 
   flatten: Trait.required,
@@ -178,10 +178,12 @@ var TSuccess = Trait.compose(TTry, Trait("Success", {
 }));
 
 function Success(v) {
+  // TODO: Less hacky constructor?
   return Object.create(Success.prototype, Trait.compose(TSuccess, Trait({value: __result(v)})))
 }
 
 function Failure(e) {
+  // TODO: Less hacky constructor?
   return Object.create(Failure.prototype, Trait.compose(TFailure, Trait({exception: e})))
 }
 

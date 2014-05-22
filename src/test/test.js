@@ -3,6 +3,7 @@ import {Option, Some, None} from '../Option';
 import {Try, Success, Failure} from '../util/Try';
 import {Random} from '../util/Random';
 
+/*
 var TFoo = Trait("Foo", {
   foo: function () {
   }
@@ -18,6 +19,7 @@ function FooBar(x) {
 }
 
 var fooBar = FooBar(3);
+ */
 /*
 console.log(fooBar.isInstanceOf("Bar"));
 console.log(fooBar.isInstanceOf("Foo"));
@@ -49,6 +51,10 @@ var t = Try(1);
 console.log(t instanceof Success);
 console.log(t instanceof Try);
 console.log(!(t instanceof Failure));
+var tt = t.map(function (x) {
+  return x + 1;
+});
+console.log(tt.get())
 
 
 /*

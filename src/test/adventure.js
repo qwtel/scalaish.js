@@ -30,11 +30,12 @@ Adventure.prototype.eatenByMonster = function () {
 
 var adventure = new Adventure();
 
-adventure.collectCoins().flatMap(function (coins) {
-  return adventure.buyTreasure(coins);
-}).recover(function() {
-  // TODO: Something a la PartialFunction, depends on custom Exceptions
-  return "Lose";
-}).forEach(function (x) {
-  console.log(x);
-});
+adventure.collectCoins()
+  .flatMap(function (coins) {
+    return adventure.buyTreasure(coins);
+  })
+  .orElse(Try("Lose"))
+  .forEach(function (v) {
+    console.log(v);
+  });
+
