@@ -1,4 +1,7 @@
-import {Trait} from './helpers/Trait';
+import {Trait} from '../helpers/Trait';
+import {Option, Some, None} from '../Option';
+import {Try, Success, Failure} from '../util/Try';
+import {Random} from '../util/Random';
 
 var TFoo = Trait("Foo", {
   foo: function () {
@@ -27,8 +30,8 @@ console.log(fooBar.isInstanceOf("FooBar"));
 console.log(fooBar instanceof FooBar);
 */
 
-import {Option, Some, None} from './Option';
 
+/*
 var o = Option(1);
 console.log(o instanceof Some);
 console.log(o instanceof Option);
@@ -40,9 +43,15 @@ console.log(!o.isInstanceOf("Other"));
 console.log(!o.isInstanceOf("None"));
 console.log(o.get() === 1);
 console.log(o.map(function(x) { return x + 1}).get() === 2);
+*/
 
-import {Random} from './util/Random';
+var t = Try(1);
+console.log(t instanceof Success);
+console.log(t instanceof Try);
+console.log(!(t instanceof Failure));
 
+
+/*
 function testRandom(r) {
   console.log(r.nextInt());
   var i = 0;
@@ -67,6 +76,7 @@ testRandom(r);
 
 r = new Random();
 testRandom(r);
+*/
 
 /*
 var fooBar = Trait.create(Object.prototype, TFooBar);

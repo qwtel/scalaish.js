@@ -98,9 +98,23 @@ var Trait = (function () {
     return record;
   };
 
+  function copy(traits) {
+    return traits;
+    /*
+    var newTraits = [];
+    forEach(traits, function (t) {
+      // TODO: Use better copying mechanism
+      var newTrait = JSON.parse(JSON.stringify(t));
+      newTraits.push(newTrait)
+    });
+    return newTraits;
+    */
+  }
+
   function prepareTypes(func) {
     return function () {
       var traits = slice(arguments, 0);
+      traits = copy(traits);
 
       var hasTypes = false;
       var __type__ = {};
@@ -119,6 +133,7 @@ var Trait = (function () {
             hasTypes = i;
           } else {
             // remove types
+            // TODO: This is very bad: changes the original trait; use copy
             delete t['__type__'];
             delete t['isInstanceOf'];
           }
