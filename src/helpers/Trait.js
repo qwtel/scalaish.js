@@ -1,4 +1,5 @@
 import {Trait} from "traits";
+import {__clone} from "./helpers";
 
 var T = Trait;
 
@@ -99,16 +100,12 @@ var Trait = (function () {
   };
 
   function copy(traits) {
-    return traits;
-    /*
     var newTraits = [];
     forEach(traits, function (t) {
-      // TODO: Use better copying mechanism
-      var newTrait = JSON.parse(JSON.stringify(t));
+      var newTrait = __clone(t);
       newTraits.push(newTrait)
     });
     return newTraits;
-    */
   }
 
   function prepareTypes(func) {
