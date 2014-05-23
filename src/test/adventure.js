@@ -1,4 +1,3 @@
-import {Trait} from '../helpers/Trait';
 import {Random} from '../util/Random';
 import {Try, Success, Failure} from '../util/Try';
 

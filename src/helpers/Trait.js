@@ -130,7 +130,7 @@ var Trait = (function () {
             hasTypes = i;
           } else {
             // remove types
-            // TODO: This is very bad: changes the original trait; use copy
+            // TODO: Use resolve instead?
             delete t['__type__'];
             delete t['isInstanceOf'];
           }

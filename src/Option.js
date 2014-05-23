@@ -120,16 +120,13 @@ var TOption = Trait("Option", {
     }
   },
 
-  /*
-   TODO: Not sure what this does
-   Option.prototype.flatten = function () {
-   if (this.isEmpty()) {
-   return None()
-   } else {
-   return this.get()
-   }
-   };
-   */
+  flatten: function () {
+    if (this.isEmpty()) {
+      return None()
+    } else {
+      return this.get()
+    }
+  },
 
   /**
    * Returns this $option if it is nonempty '''and''' applying the predicate $p to
