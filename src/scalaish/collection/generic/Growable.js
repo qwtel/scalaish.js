@@ -1,6 +1,6 @@
-import {Trait} from 'traits';
+import {Trait} from '../../helpers/Trait';
 
-var Growable = Trait({
+var TGrowable = Trait("Growable", {
 
   addOne: Trait.required,
 
@@ -18,9 +18,7 @@ var Growable = Trait({
     return this;
   },
 
-  clear: function(elem) {
-    Trait.unimplemented(this, "clear");
-  }
+  clear: Trait.required
 });
 
-export {Growable};
+export {TGrowable};

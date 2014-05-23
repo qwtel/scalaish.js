@@ -1,6 +1,6 @@
-import {Trait} from 'traits';
+import {Trait} from '../helpers/Trait';
 
-var TraversableOnce = Trait({
+var TTraversableOnce = Trait("TraversableOnce", {
   forEach: Trait.required,
   isEmpty: Trait.required,
   hasDefiniteSize: Trait.required,
@@ -54,9 +54,6 @@ var TraversableOnce = Trait({
       })
     }.bind(this);
   }
-
-
 });
 
-export {TraversableOnce};
-
+export {TTraversableOnce};

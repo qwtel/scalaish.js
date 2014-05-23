@@ -1,9 +1,8 @@
-import {Trait} from 'traits';
+import {Trait} from '../../helpers/Trait';
 
-import {TraversableLike} from '../TraversableLike';
-import {Growable} from '../generic/Growable';
+import {TGrowable} from '../generic/Growable';
 
-var Builder = Trait.compose(Growable, Trait({
+var TBuilder_ = Trait("Builder", {
 
   addOne: Trait.required,
 
@@ -38,6 +37,8 @@ var Builder = Trait.compose(Growable, Trait({
   }
 
   // TODO: mapResult
-}));
+});
 
-export {Builder};
+var TBuilder = Trait.compose(TBuilder_, TGrowable);
+
+export {TBuilder};
