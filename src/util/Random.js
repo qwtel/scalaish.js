@@ -83,7 +83,6 @@ function Random(random) {
   if (typeof random === 'undefined') {
     random = Math.random;
   }
-  // TODO: Less hacky constructor?
   return Object.create(Random.prototype, Trait.compose(TRandom, Trait({random: random})))
 }
 

@@ -5,22 +5,18 @@ function Adventure() {
 }
 
 Adventure.prototype.collectCoins = function () {
-  return Try(function () {
-    if (this.eatenByMonster()) {
-      throw new Error("GameOver");
-    }
-    return Random().nextInt(10);
-  }.bind(this));
+  if (this.eatenByMonster()) {
+    throw new Error("GameOver");
+  }
+  return Random().nextInt(10);
 };
 
 Adventure.prototype.buyTreasure = function (coins) {
-  return Try(function () {
-    if (coins < 5) {
-      throw new Error("GameOver")
-    }
+  if (coins < 5) {
+    throw new Error("GameOver")
+  }
 
-    return "Win"
-  }.bind(this));
+  return "Win"
 };
 
 Adventure.prototype.eatenByMonster = function () {
@@ -29,8 +25,8 @@ Adventure.prototype.eatenByMonster = function () {
 
 var adventure = new Adventure();
 
-adventure.collectCoins()
-  .flatMap(function (coins) {
+Try(function() { return adventure.collectCoins() })
+  .map(function (coins) {
     return adventure.buyTreasure(coins);
   })
   .orElse(Try("Lose"))

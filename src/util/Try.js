@@ -1,6 +1,7 @@
 import {__result} from "../helpers/helpers";
 import {Trait} from "../helpers/Trait";
 import {Some, None} from '../Option';
+import {NoSuchElementException, UnsupportedOperationException} from '../Exceptions';
 
 var TTry = Trait("Try", {
   isFailure: Trait.required,
@@ -105,7 +106,7 @@ var TFailure = Trait.compose(TTry, Trait("Failure", {
 
   recover: function (rescueException) {
     try {
-      return (true /* TODO */) ? Try(rescueException(this.exception)) : this
+      return (true /* TODO */) ? Try(rescueException.bind(undefined, this.exception)) : this
     } catch (e) {
       // TODO: NonFatal
       return Failure(e)
@@ -154,13 +155,12 @@ var TSuccess = Trait.compose(TTry, Trait("Success", {
   },
 
   map: function (f) {
-    return Try(f(this.value))
+    return Try(f.bind(undefined, this.value))
   },
 
   filter: function (p) {
     try {
-      // TODO: NoSuchElementException
-      return p(this.value) ? this : Failure(new Error("Predicate does not hold for " + this.value))
+      return p(this.value) ? this : Failure(new NoSuchElementException("Predicate does not hold for " + this.value))
     } catch (e) {
       // TODO: NonFatal
       return Failure(e)
@@ -172,18 +172,15 @@ var TSuccess = Trait.compose(TTry, Trait("Success", {
   },
 
   failed: function () {
-    // TODO: UnsupportedOperationException
-    return Failure(new Error("Success.failed"))
+    return Failure(new UnsupportedOperationException("Success.failed"))
   }
 }));
 
 function Success(v) {
-  // TODO: Less hacky constructor?
   return Object.create(Success.prototype, Trait.compose(TSuccess, Trait({value: __result(v)})))
 }
 
 function Failure(e) {
-  // TODO: Less hacky constructor?
   return Object.create(Failure.prototype, Trait.compose(TFailure, Trait({exception: e})))
 }
 

@@ -1,5 +1,6 @@
 import {__result} from "./helpers/helpers";
 import {Trait} from "./helpers/Trait";
+import {NoSuchElementException} from './Exceptions';
 
 var TOption = Trait("Option", {
 
@@ -20,7 +21,7 @@ var TOption = Trait("Option", {
   /**
    * Returns the option's value.
    * @note The option must be nonEmpty.
-   * @throws Predef.NoSuchElementException if the option is empty.
+   * @throws {NoSuchElementException} if the option is empty.
    * @return {A}
    */
   get: Trait.required,
@@ -268,8 +269,7 @@ var TNone = Trait.compose(
      * @inheritDoc
      */
     get: function () {
-      // TODO: Exception types
-      throw new Error("None.get");
+      throw new NoSuchElementException("None.get");
     },
 
     /**
@@ -284,12 +284,10 @@ var TNone = Trait.compose(
 );
 
 function Some(x) {
-  // TODO: Less hacky constructor?
   return Object.create(Some.prototype, Trait.compose(TSome, Trait({value: x})))
 }
 
 function None() {
-  // TODO: Less hacky constructor?
   return Object.create(None.prototype, TNone);
 }
 
