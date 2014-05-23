@@ -2,6 +2,10 @@ import {Trait} from '../helpers/Trait';
 import {Option, Some, None} from '../Option';
 import {Try, Success, Failure} from '../util/Try';
 import {Random} from '../util/Random';
+import {T} from '../Product';
+
+
+console.log(T(1, 2)._1);
 
 /*
 var TFoo = Trait("Foo", {
