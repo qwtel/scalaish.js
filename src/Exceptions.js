@@ -9,6 +9,7 @@ var TRuntimeException = Trait.compose(TException, Trait("RuntimeException", {}))
 
 var TNoSuchElementException = Trait.compose(TRuntimeException, Trait("NoSuchElementException", {}));
 var TUnsupportedOperationException = Trait.compose(TRuntimeException, Trait("UnsupportedOperationException", {}));
+var TIndexOutOfBoundsException = Trait.compose(TRuntimeException, Trait("IndexOutOfBoundsException", {}));
 
 function Throwable(msg) {
   return Object.create(Throwable.prototype, Trait.compose(TThrowable, Trait({message: msg})))
@@ -30,4 +31,15 @@ function UnsupportedOperationException(msg) {
   return Object.create(UnsupportedOperationException.prototype, Trait.compose(TUnsupportedOperationException, Trait({message: msg})))
 }
 
-export {Throwable, Exception, RuntimeException, NoSuchElementException, UnsupportedOperationException};
+function IndexOutOfBoundsException(msg) {
+  return Object.create(IndexOutOfBoundsException.prototype, Trait.compose(TIndexOutOfBoundsException, Trait({message: msg})))
+}
+
+export {
+  Throwable,
+  Exception,
+  RuntimeException,
+  NoSuchElementException,
+  UnsupportedOperationException,
+  IndexOutOfBoundsException
+  };

@@ -7,7 +7,7 @@ function retry(noTimes) {
     for (var i = 0; i < noTimes; i++) {
       range.push(i);
     }
-    var failed = Failure(new Error('bla'));
+    var failed = Failure(new Error('Failed after ' + noTimes + ' retries.'));
 
     var attempts = range.map(function () {
       return block;

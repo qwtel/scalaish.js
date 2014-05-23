@@ -1,5 +1,6 @@
 import {Trait} from "./helpers/Trait";
 import {TEquals} from "./Equals";
+import {IndexOutOfBoundsException} from "./Exceptions";
 
 /**
  * Base trait for all products, which in the standard library include at
@@ -51,7 +52,7 @@ var TProduct1 = Trait.compose(TProduct, Trait("Product1", {
       case 0:
         return this._1;
       default:
-        throw new Error('IndexOutOfBoundsException');
+        throw new IndexOutOfBoundsException(n);
     }
   },
 
@@ -68,7 +69,7 @@ var TProduct2 = Trait.compose(TProduct, Trait("Product2", {
       case 1:
         return this._2;
       default:
-        throw new Error('IndexOutOfBoundsException');
+        throw new IndexOutOfBoundsException(n);
     }
   },
 
@@ -88,7 +89,7 @@ var TProduct3 = Trait.compose(TProduct, Trait("Product3", {
       case 2:
         return this._3;
       default:
-        throw new Error('IndexOutOfBoundsException');
+        throw new IndexOutOfBoundsException(n);
     }
   },
 
@@ -111,7 +112,7 @@ var TProduct4 = Trait.compose(TProduct, Trait("Product4", {
       case 3:
         return this._4;
       default:
-        throw new Error('IndexOutOfBoundsException');
+        throw new IndexOutOfBoundsException(n);
     }
   },
 
@@ -181,7 +182,6 @@ function Tuple4(_1, _2, _3, _4) {
  * Convenience "factory" function for Tuples
  *
  * @return {Tuple1|Tuple2|Tuple3|Tuple4}
- * @constructor
  */
 function T() {
   var a = Array.prototype.slice.call(arguments, 0);

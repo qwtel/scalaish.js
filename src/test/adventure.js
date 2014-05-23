@@ -1,36 +1,27 @@
 import {Random} from '../util/Random';
 import {Try, Success, Failure} from '../util/Try';
 
-function Adventure() {
-}
-
-Adventure.prototype.collectCoins = function () {
-  if (this.eatenByMonster()) {
+function collectCoins() {
+  if (eatenByMonster()) {
     throw new Error("GameOver");
   }
   return Random().nextInt(10);
-};
+}
 
-Adventure.prototype.buyTreasure = function (coins) {
-  if (coins < 5) {
+function buyTreasure(coins) {
+  if (coins < 3) {
     throw new Error("GameOver")
   }
 
   return "Win"
-};
+}
 
-Adventure.prototype.eatenByMonster = function () {
+function eatenByMonster() {
   return Random().nextBoolean();
-};
+}
 
-var adventure = new Adventure();
-
-Try(function() { return adventure.collectCoins() })
-  .map(function (coins) {
-    return adventure.buyTreasure(coins);
-  })
+Try(collectCoins).map(buyTreasure)
   .orElse(Try("Lose"))
   .forEach(function (v) {
     console.log(v);
   });
-
