@@ -1,5 +1,6 @@
 import {__result} from "./helpers/helpers";
 import {Trait} from "./helpers/Trait";
+import {NoSuchElementException} from './Exceptions';
 
 var TOption = Trait("Option", {
 
@@ -20,7 +21,7 @@ var TOption = Trait("Option", {
   /**
    * Returns the option's value.
    * @note The option must be nonEmpty.
-   * @throws Predef.NoSuchElementException if the option is empty.
+   * @throws {NoSuchElementException} if the option is empty.
    * @return {A}
    */
   get: Trait.required,
@@ -120,16 +121,13 @@ var TOption = Trait("Option", {
     }
   },
 
-  /*
-   TODO: Not sure what this does
-   Option.prototype.flatten = function () {
-   if (this.isEmpty()) {
-   return None()
-   } else {
-   return this.get()
-   }
-   };
-   */
+  flatten: function () {
+    if (this.isEmpty()) {
+      return None()
+    } else {
+      return this.get()
+    }
+  },
 
   /**
    * Returns this $option if it is nonempty '''and''' applying the predicate $p to
@@ -271,8 +269,7 @@ var TNone = Trait.compose(
      * @inheritDoc
      */
     get: function () {
-      // TODO: Exception types
-      throw new Error("None.get");
+      throw new NoSuchElementException("None.get");
     },
 
     /**
