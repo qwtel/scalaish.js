@@ -1,4 +1,5 @@
 import {_} from 'underscore';
+import {T} from './Product';
 import {__result} from "./helpers/helpers";
 import {NoSuchElementException} from './Exceptions';
 
@@ -340,19 +341,19 @@ var constructors = (function () {
 
   None.prototype = _.extend(Object.create(Option.prototype), TNone);
 
-  return [Option, Some, None]
+  return T(Option, Some, None)
 })();
 
 function Option(x) {
-  return new constructors[0](x)
+  return new constructors._1(x)
 }
 
 function Some(x) {
-  return new constructors[1](x)
+  return new constructors._2(x)
 }
 
 function None() {
-  return new constructors[2]()
+  return new constructors._3()
 }
 
 export {Option, Some, None};

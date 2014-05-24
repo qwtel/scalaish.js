@@ -1,4 +1,5 @@
 import {_} from 'underscore';
+import {T} from '../Product'
 import {__result} from "../helpers/helpers";
 import {Some, None} from '../Option';
 import {NoSuchElementException, UnsupportedOperationException} from '../Exceptions';
@@ -33,7 +34,34 @@ var constructors = (function () {
 
     filter: null,
 
-    // TODO: withFilter
+    // TODO: This is the exact same code as in Option
+    withFilter: function (p, context) {
+      var self = this;
+
+      function WithFilter(p, context) {
+        this.p = p;
+        this.context = context;
+      }
+
+      WithFilter.prototype = {
+        map: function (f, context) {
+          return self.filter(this.p, this.context).map(f, context)
+        },
+        flatMap: function (f, context) {
+          return self.filter(this.p, this.context).flatMap(f, context)
+        },
+        foreach: function (f, context) {
+          return self.filter(this.p, this.context).foreach(f, context)
+        },
+        withFilter: function (q, context) {
+          return new WithFilter(function (x) {
+            return this.p.call(x, this.context) && q.call(x, context)
+          }.bind(this))
+        }
+      };
+
+      return new WithFilter(p, context)
+    },
 
     recoverWith: null,
 
@@ -200,19 +228,19 @@ var constructors = (function () {
   }
   Failure.prototype = _.extend(Object.create(Try.prototype), TFailure);
 
-  return [Try, Success, Failure]
+  return T(Try, Success, Failure)
 })();
 
 function Try(r, context) {
-  return new constructors[0](r, context);
+  return new constructors._1(r, context);
 }
 
 function Success(v, context) {
-  return new constructors[1](v, context);
+  return new constructors._2(v, context);
 }
 
 function Failure(e) {
-  return new constructors[2](e);
+  return new constructors._3(e);
 }
 
 export {Try, Success, Failure};
