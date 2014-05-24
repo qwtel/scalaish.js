@@ -1,6 +1,10 @@
 //import {Trait} from '../helpers/Trait';
-import {Option, Some, None} from '../Option';
-import {Try, Success, Failure} from '../util/Try';
+var Option = require("../dist/cjs/scalaish/Option").Option;
+var Some = require("../dist/cjs/scalaish/Option").Some;
+var None = require("../dist/cjs/scalaish/Option").None;
+var Try = require("../dist/cjs/scalaish/util/Try").Try;
+var Success = require("../dist/cjs/scalaish/util/Try").Success;
+var Failure = require("../dist/cjs/scalaish/util/Try").Failure;
 //import {Random} from '../util/Random';
 //import {T} from '../Product';
 

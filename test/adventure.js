@@ -1,11 +1,13 @@
-import {Random} from '../util/Random';
-import {Try, Success, Failure} from '../util/Try';
+var Random = require("../dist/cjs/scalaish/util/Random").Random;
+var Try = require("../dist/cjs/scalaish/util/Try").Try;
+var Success = require("../dist/cjs/scalaish/util/Try").Success;
+var Failure = require("../dist/cjs/scalaish/util/Try").Failure;
 
 function collectCoins() {
   if (eatenByMonster()) {
     throw new Error("GameOver");
   }
-  return Random().nextInt(10);
+  return new Random().nextInt(10);
 }
 
 function buyTreasure(coins) {
@@ -17,7 +19,7 @@ function buyTreasure(coins) {
 }
 
 function eatenByMonster() {
-  return Random().nextBoolean();
+  return new Random().nextBoolean();
 }
 
 Try(collectCoins).map(buyTreasure)
