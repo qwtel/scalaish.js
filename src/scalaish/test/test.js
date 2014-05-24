@@ -43,6 +43,15 @@ console.log(!(o instanceof None));
 console.log(o.get() === 1);
 console.log(o.map(function(x) { return x + 1}).get() === 2);
 console.log(o);
+
+var start = new Date().getTime()
+var tmp = [];
+for (var i = 0; i<100000; i++) {
+  tmp.push(Option(i))
+}
+var now = new Date().getTime()
+console.log(now - start)
+
 /*
 console.log(o.isInstanceOf("Some"));
 console.log(o.isInstanceOf("Option"));
