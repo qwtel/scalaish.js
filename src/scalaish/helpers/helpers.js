@@ -13,6 +13,7 @@ var __extends = function (parent, child) {
 };
 
 // http://stackoverflow.com/a/1880726/870615
+// super bad performance, don't use this
 var __isConstructor = function (_this, Class) {
   var isConstructor = false;
   var key = '__previouslyConstructedBy' + Class.name + '__';
@@ -33,8 +34,8 @@ var __isFunction = function (obj) {
 };
 
 // http://underscorejs.org/
-var __result = function (value) {
-  return __isFunction(value) ? value.call() : value;
+var __result = function (value, context) {
+  return __isFunction(value) ? value.call(context) : value;
 };
 
 // http://stackoverflow.com/a/728694/870615

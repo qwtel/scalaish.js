@@ -1,6 +1,6 @@
 //import {Trait} from '../helpers/Trait';
 import {Option, Some, None} from '../Option';
-//import {Try, Success, Failure} from '../util/Try';
+import {Try, Success, Failure} from '../util/Try';
 //import {Random} from '../util/Random';
 //import {T} from '../Product';
 
@@ -37,20 +37,18 @@ console.log(fooBar instanceof FooBar);
 */
 
 var o = Option(1);
-console.log(o instanceof Some);
-console.log(o instanceof Option);
-console.log(!(o instanceof None));
+//console.log(o instanceof Some);
+//console.log(o instanceof Option);
+//console.log(!(o instanceof None));
 console.log(o.get() === 1);
 console.log(o.map(function(x) { return x + 1}).get() === 2);
-console.log(o);
 
-var start = new Date().getTime()
-var tmp = [];
+var start = new Date().getTime();
 for (var i = 0; i<100000; i++) {
-  tmp.push(Option(i))
+  Option(i)
 }
-var now = new Date().getTime()
-console.log(now - start)
+var now = new Date().getTime();
+console.log(now - start);
 
 /*
 console.log(o.isInstanceOf("Some"));
@@ -60,16 +58,14 @@ console.log(!o.isInstanceOf("Other"));
 console.log(!o.isInstanceOf("None"));
 */
 
-/*
 var t = Try(1);
-console.log(t instanceof Success);
-console.log(t instanceof Try);
-console.log(!(t instanceof Failure));
+//console.log(t instanceof Success);
+//console.log(t instanceof Try);
+//console.log(!(t instanceof Failure));
 var tt = t.map(function (x) {
   return x + 1;
-});
-console.log(tt.get())
-*/
+}).get();
+console.log(tt === 2)
 
 /*
 function testRandom(r) {
