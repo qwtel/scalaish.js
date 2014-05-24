@@ -36,12 +36,23 @@ console.log(fooBar.isInstanceOf("FooBar"));
 console.log(fooBar instanceof FooBar);
 */
 
-
-/*
 var o = Option(1);
 console.log(o instanceof Some);
 console.log(o instanceof Option);
 console.log(!(o instanceof None));
+console.log(o.get() === 1);
+console.log(o.map(function(x) { return x + 1}).get() === 2);
+console.log(o);
+
+var start = new Date().getTime()
+var tmp = [];
+for (var i = 0; i<100000; i++) {
+  tmp.push(Option(i))
+}
+var now = new Date().getTime()
+console.log(now - start)
+
+/*
 console.log(o.isInstanceOf("Some"));
 console.log(o.isInstanceOf("Option"));
 console.log(o.isInstanceOf("Any"));
@@ -51,6 +62,7 @@ console.log(o.get() === 1);
 console.log(o.map(function(x) { return x + 1}).get() === 2);
 */
 
+/*
 var t = Try(1);
 console.log(t instanceof Success);
 console.log(t instanceof Try);
@@ -59,6 +71,7 @@ var tt = t.map(function (x) {
   return x + 1;
 });
 console.log(tt.get())
+*/
 
 
 /*
