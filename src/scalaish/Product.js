@@ -55,7 +55,7 @@ var TProduct1 = _.extend({}, TProduct, {
     }
   },
 
-  _1: Trait.required
+  _1: null
 });
 
 var TProduct2 = _.extend({}, TProduct, {
@@ -72,8 +72,8 @@ var TProduct2 = _.extend({}, TProduct, {
     }
   },
 
-  _1: Trait.required,
-  _2: Trait.required
+  _1: null,
+  _2: null
 });
 
 var TProduct3 = _.extend({}, TProduct, {
@@ -92,9 +92,9 @@ var TProduct3 = _.extend({}, TProduct, {
     }
   },
 
-  _1: Trait.required,
-  _2: Trait.required,
-  _3: Trait.required
+  _1: null,
+  _2: null,
+  _3: null
 });
 
 var TProduct4 = _.extend({}, TProduct, {
@@ -115,10 +115,10 @@ var TProduct4 = _.extend({}, TProduct, {
     }
   },
 
-  _1: Trait.required,
-  _2: Trait.required,
-  _3: Trait.required,
-  _4: Trait.required
+  _1: null,
+  _2: null,
+  _3: null,
+  _4: null
 });
 
 var TTuple1 = _.extend({}, TProduct1, {
@@ -195,18 +195,17 @@ Tuple4.prototype = TTuple4;
  * @return {Tuple1|Tuple2|Tuple3|Tuple4}
  */
 function T() {
-  var a = Array.prototype.slice.call(arguments, 0);
-  switch (a.length) {
+  switch (arguments.length) {
     case 1:
-      return new Tuple1(a[0]);
+      return new Tuple1(arguments[0]);
     case 2:
-      return new Tuple2(a[0], a[1]);
+      return new Tuple2(arguments[0], arguments[1]);
     case 3:
-      return new Tuple3(a[0], a[1], a[2]);
+      return new Tuple3(arguments[0], arguments[1], arguments[2]);
     case 4:
-      return new Tuple4(a[0], a[1], a[2], a[3]);
+      return new Tuple4(arguments[0], arguments[1], arguments[2], arguments[3]);
     default:
-      throw new Error('Implementation missing')
+      throw new Error('Implementation missing for tuple with arity ' + arguments.length)
   }
 }
 
