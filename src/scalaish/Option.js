@@ -164,7 +164,33 @@ var constructors = (function () {
       return this.isDefined()
     },
 
-    // TODO: withFilter
+    withFilter: function (p, context) {
+      var self = this;
+
+      function WithFilter(p, context) {
+        this.p = p;
+        this.context = context;
+      }
+
+      WithFilter.prototype = {
+        map: function (f, context) {
+          return self.filter(this.p, this.context).map(f, context)
+        },
+        flatMap: function (f, context) {
+          return self.filter(this.p, this.context).flatMap(f, context)
+        },
+        foreach: function (f, context) {
+          return self.filter(this.p, this.context).foreach(f, context)
+        },
+        withFilter: function (q, context) {
+          return new WithFilter(function (x) {
+            return this.p.call(x, this.context) && q.call(x, context)
+          }.bind(this))
+        }
+      };
+
+      return new WithFilter(p, context)
+    },
 
     /**
      * Tests whether the option contains a given value as an element.
@@ -283,12 +309,12 @@ var constructors = (function () {
    * @return {Option.<B>}
    * @constructor
    */
-  function Option(x, context) {
+  function Option(x) {
     if (x == null) {
       return new None();
     }
     else {
-      return new Some(x, context);
+      return new Some(x);
     }
   }
 
@@ -299,8 +325,8 @@ var constructors = (function () {
    * @constructor
    * @extends {Option.<B>}
    */
-  function Some(x, context) {
-    this.value = __result(x, context);
+  function Some(x) {
+    this.value = __result(x);
   }
 
   Some.prototype = _.extend(Object.create(Option.prototype), TSome);
@@ -311,17 +337,18 @@ var constructors = (function () {
    */
   function None() {
   }
+
   None.prototype = _.extend(Object.create(Option.prototype), TNone);
 
   return [Option, Some, None]
 })();
 
-function Option(x, context) {
-  return new constructors[0](x, context)
+function Option(x) {
+  return new constructors[0](x)
 }
 
-function Some(x, context) {
-  return new constructors[1](x, context)
+function Some(x) {
+  return new constructors[1](x)
 }
 
 function None() {

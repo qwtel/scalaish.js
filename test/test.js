@@ -45,7 +45,7 @@ var o = Option(1);
 //console.log(o instanceof Option);
 //console.log(!(o instanceof None));
 console.log(o.get() === 1);
-console.log(o.map(function(x) { return x + 1}).get() === 2);
+console.log(o.withFilter(function(x) {return x >= 1}).map(function(x) { return x + 1}).get() === 2);
 
 var start = new Date().getTime();
 for (var i = 0; i<100000; i++) {
@@ -71,7 +71,7 @@ var tt = t.map(function (x) {
 }).get();
 console.log(tt === 2)
 
-None().get();
+//None().get();
 
 /*
 function testRandom(r) {
