@@ -1,11 +1,11 @@
-import {Trait} from '../helpers/Trait';
+//import {Trait} from '../helpers/Trait';
 import {Option, Some, None} from '../Option';
-import {Try, Success, Failure} from '../util/Try';
-import {Random} from '../util/Random';
-import {T} from '../Product';
+//import {Try, Success, Failure} from '../util/Try';
+//import {Random} from '../util/Random';
+//import {T} from '../Product';
 
 
-console.log(T(1, 2)._1);
+//console.log(T(1, 2)._1);
 
 /*
 var TFoo = Trait("Foo", {
@@ -36,21 +36,22 @@ console.log(fooBar.isInstanceOf("FooBar"));
 console.log(fooBar instanceof FooBar);
 */
 
-
-/*
 var o = Option(1);
 console.log(o instanceof Some);
 console.log(o instanceof Option);
 console.log(!(o instanceof None));
+console.log(o.get() === 1);
+console.log(o.map(function(x) { return x + 1}).get() === 2);
+console.log(o);
+/*
 console.log(o.isInstanceOf("Some"));
 console.log(o.isInstanceOf("Option"));
 console.log(o.isInstanceOf("Any"));
 console.log(!o.isInstanceOf("Other"));
 console.log(!o.isInstanceOf("None"));
-console.log(o.get() === 1);
-console.log(o.map(function(x) { return x + 1}).get() === 2);
 */
 
+/*
 var t = Try(1);
 console.log(t instanceof Success);
 console.log(t instanceof Try);
@@ -59,7 +60,7 @@ var tt = t.map(function (x) {
   return x + 1;
 });
 console.log(tt.get())
-
+*/
 
 /*
 function testRandom(r) {

@@ -1,14 +1,17 @@
-import {__result} from "./helpers/helpers";
-import {Trait} from "./helpers/Trait";
-import {NoSuchElementException} from './Exceptions';
+import {__isConstructor, __result} from "./helpers/helpers";
+import {_} from 'underscore';
+//import {NoSuchElementException} from './Exceptions';
 
-var TOption = Trait("Option", {
+function NoSuchElementException() {
+}
+
+var TOption = {
 
   /**
    * Returns true if the option is $none, false otherwise.
    * @return {boolean}
    */
-  isEmpty: Trait.required,
+  isEmpty: null,
 
   /**
    * Returns true if the option is an instance of $some, false otherwise.
@@ -24,7 +27,7 @@ var TOption = Trait("Option", {
    * @throws {NoSuchElementException} if the option is empty.
    * @return {A}
    */
-  get: Trait.required,
+  get: null,
 
   /**
    * Returns the option's value if the option is nonempty, otherwise
@@ -66,11 +69,11 @@ var TOption = Trait("Option", {
    * @see flatMap
    * @see forEach
    */
-  map: function (f) {
+  map: function (f, context) {
     if (this.isEmpty()) {
-      return None()
+      return new None()
     } else {
-      return Some(f(this.get()))
+      return new Some(f.call(context, this.get()))
     }
   },
 
@@ -91,11 +94,11 @@ var TOption = Trait("Option", {
      *  @return {B}
      *  @param f {function(A): B} the function to apply if nonempty.
      */
-    return function (f) {
+    return function (f, context) {
       if (this.isEmpty()) {
         return __result(ifEmpty)
       } else {
-        return f(this.get())
+        return f.call(context, this.get())
       }
     }.bind(this)
   },
@@ -113,11 +116,11 @@ var TOption = Trait("Option", {
    * @see map
    * @see forEach
    */
-  flatMap: function (f) {
+  flatMap: function (f, context) {
     if (this.isEmpty()) {
       return None()
     } else {
-      return f(this.get())
+      return f.call(context, this.get())
     }
   },
 
@@ -136,8 +139,8 @@ var TOption = Trait("Option", {
    * @param  p {function(A): boolean} the predicate used for testing.
    * @return {Option.<A>}
    */
-  filter: function (p) {
-    if (this.isEmpty() || p(this.get())) {
+  filter: function (p, context) {
+    if (this.isEmpty() || p.call(context, this.get())) {
       return this;
     } else {
       return None()
@@ -151,8 +154,8 @@ var TOption = Trait("Option", {
    * @param  p {function(A): boolean} the predicate used for testing.
    * @return {Option.<A>}
    */
-  filterNot: function (p) {
-    if (this.isEmpty() || !p(this.get())) {
+  filterNot: function (p, context) {
+    if (this.isEmpty() || !p.call(context, this.get())) {
       return this;
     } else {
       return None()
@@ -186,8 +189,8 @@ var TOption = Trait("Option", {
    * @param  p {function(A): boolean}  the predicate to test
    * @return {boolean}
    */
-  exists: function (p) {
-    return !this.isEmpty() && p(this.get())
+  exists: function (p, context) {
+    return !this.isEmpty() && p.call(context, this.get())
   },
 
   /**
@@ -197,8 +200,8 @@ var TOption = Trait("Option", {
    * @param  p {function(A): boolean}  the predicate to test
    * @return {boolean}
    */
-  forAll: function (p) {
-    return this.isEmpty() || p(this.get())
+  forAll: function (p, context) {
+    return this.isEmpty() || p.call(context, this.get())
   },
 
   /**
@@ -211,17 +214,18 @@ var TOption = Trait("Option", {
    * @see map
    * @see flatMap
    */
-  forEach: function (f) {
-    if (!this.isEmpty()) return f(this.get())
+  forEach: function (f, context) {
+    if (!this.isEmpty()) return f.call(context, this.get())
   },
 
   // TODO: collect
 
-  /** Returns this $option if it is nonempty,
-   *  otherwise return the result of evaluating `alternative`.
+  /**
+   * Returns this $option if it is nonempty,
+   * otherwise return the result of evaluating `alternative`.
    *
-   *  @param alternative {Option.<A>|function(): Option.<A>} the alternative expression.
-   *  @return {Option.<A>}
+   * @param alternative {Option.<A>|function(): Option.<A>} the alternative expression.
+   * @return {Option.<A>}
    */
   orElse: function (alternative) {
     if (this.isEmpty()) {
@@ -239,65 +243,68 @@ var TOption = Trait("Option", {
 
   // TODO: toLeft
 
-});
+};
 
-var TSome = Trait.compose(
-  Trait("Some", {
-    /**
-     * @override
-     * @inheritDoc
-     */
-    get: function () {
-      return this.value;
-    },
+var TSome = {
+  /**
+   * @override
+   * @inheritDoc
+   */
+  get: function () {
+    return this.value;
+  },
 
-    /**
-     * @override
-     * @inheritDoc
-     */
-    isEmpty: function () {
-      return false;
-    }
-  }),
-  TOption
-);
+  /**
+   * @override
+   * @inheritDoc
+   */
+  isEmpty: function () {
+    return false;
+  }
+};
 
-var TNone = Trait.compose(
-  Trait("None", {
-    /**
-     * @override
-     * @inheritDoc
-     */
-    get: function () {
-      throw new NoSuchElementException("None.get");
-    },
+var TNone = {
+  /**
+   * @override
+   * @inheritDoc
+   */
+  get: function () {
+    throw new NoSuchElementException("None.get");
+  },
 
-    /**
-     * @override
-     * @inheritDoc
-     */
-    isEmpty: function () {
-      return true;
-    }
-  }),
-  TOption
-);
-
-function Some(x) {
-  return Object.create(Some.prototype, Trait.compose(TSome, Trait({value: x})))
-}
-
-function None() {
-  return Object.create(None.prototype, TNone);
-}
+  /**
+   * @override
+   * @inheritDoc
+   */
+  isEmpty: function () {
+    return true;
+  }
+};
 
 function Option(x) {
   if (x == null) {
-    return None();
+    return new None();
   }
   else {
-    return Some(x);
+    return new Some(x);
   }
 }
+Option.prototype = TOption;
+
+function Some(x) {
+  if (!__isConstructor(this, Some)) {
+    return new Some(x)
+  }
+  this.value = x;
+}
+Some.prototype = _.extend(Object.create(Option.prototype), TSome);
+
+function None() {
+  if (!__isConstructor(this, None)) {
+    return new None()
+  }
+}
+None.prototype = _.extend(Object.create(Option.prototype), TNone);
+
 export {Option, Some, None};
 

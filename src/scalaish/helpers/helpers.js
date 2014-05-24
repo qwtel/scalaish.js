@@ -13,11 +13,16 @@ var __extends = function (parent, child) {
 };
 
 // http://stackoverflow.com/a/1880726/870615
-var __isConstructor = function (Clazz) {
+var __isConstructor = function (_this, Class) {
   var isConstructor = false;
-  if (this instanceof Clazz && !this['__previouslyConstructedBy' + Clazz.name]) {
+  var key = '__previouslyConstructedBy' + Class.name + '__';
+  if (_this instanceof Class && !_this[key]) {
     isConstructor = true;
-    this['__previouslyConstructedBy' + Clazz.name] = true;
+    Object.defineProperty(_this, key, {
+      value: true,
+      writeable: false,
+      enumerable: false
+    })
   }
   return isConstructor;
 };

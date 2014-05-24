@@ -10,7 +10,9 @@
     "type": "git",
     "url": "https://github.com/cell303/scala-ish.js.git"
   },
-  "dependencies": {},
+  "dependencies": {
+    "underscore": "^1.6.0"
+  },
   "devDependencies": {
     "gulp": "^3.6.2",
     "gulp-es6-module-transpiler": "^0.1.1",
@@ -21,5 +23,5 @@
   "engines": {
     "node": ">=0.10.0",
     "npm": ">=1.2.10"
-  },
+  }
 }
