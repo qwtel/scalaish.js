@@ -1,13 +1,7 @@
-import {__result} from "../helpers/helpers";
 import {_} from 'underscore';
+import {__result} from "../helpers/helpers";
 import {Some, None} from '../Option';
-//import {NoSuchElementException, UnsupportedOperationException} from '../Exceptions';
-
-function NoSuchElementException() {
-}
-
-function UnsupportedOperationException() {
-}
+import {NoSuchElementException, UnsupportedOperationException} from '../Exceptions';
 
 var constructors = (function () {
   var TTry = {

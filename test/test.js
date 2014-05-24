@@ -71,6 +71,8 @@ var tt = t.map(function (x) {
 }).get();
 console.log(tt === 2)
 
+None().get();
+
 /*
 function testRandom(r) {
   console.log(r.nextInt());

@@ -1,9 +1,6 @@
-import {__result} from "./helpers/helpers";
 import {_} from 'underscore';
-//import {NoSuchElementException} from './Exceptions';
-
-function NoSuchElementException() {
-}
+import {__result} from "./helpers/helpers";
+import {NoSuchElementException} from './Exceptions';
 
 var constructors = (function () {
   var TOption = {
