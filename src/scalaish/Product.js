@@ -1,5 +1,4 @@
-import {Trait} from "./helpers/Trait";
-import {TEquals} from "./Equals";
+import {_} from 'underscore';
 import {IndexOutOfBoundsException} from "./Exceptions";
 
 /**
@@ -8,7 +7,7 @@ import {IndexOutOfBoundsException} from "./Exceptions";
  * their subclasses [[scala.Tuple1]] through [[scala.Tuple22]].  In addition,
  * all case classes implement `Product` with synthetically generated methods.
  */
-var TProduct = Trait.compose(TEquals, Trait("Product", {
+var TProduct = {
 
   /**
    * The n^th^ element of this product, 0-based.  In other words, for a
@@ -18,13 +17,13 @@ var TProduct = Trait.compose(TEquals, Trait("Product", {
    * @throws       `IndexOutOfBoundsException`
    * @return  {*} the element `n` elements after the first element
    */
-  productElement: Trait.required,
+  productElement: null,
 
   /**
    * The size of this product.
    * @return  {number} for a product `A(x,,1,,, ..., x,,k,,)`, returns `k`
    */
-  productArity: Trait.required,
+  productArity: null,
 
   /**
    * An iterator over all the elements of this product.
@@ -42,9 +41,9 @@ var TProduct = Trait.compose(TEquals, Trait("Product", {
    * @type {string} in the default implementation, the empty string
    */
   productPrefix: ''
-}));
+};
 
-var TProduct1 = Trait.compose(TProduct, Trait("Product1", {
+var TProduct1 = _.extend({}, TProduct, {
   productArity: 1,
 
   productElement: function (n) {
@@ -56,10 +55,10 @@ var TProduct1 = Trait.compose(TProduct, Trait("Product1", {
     }
   },
 
-  _1: Trait.required
-}));
+  _1: null
+});
 
-var TProduct2 = Trait.compose(TProduct, Trait("Product2", {
+var TProduct2 = _.extend({}, TProduct, {
   productArity: 2,
 
   productElement: function (n) {
@@ -73,11 +72,11 @@ var TProduct2 = Trait.compose(TProduct, Trait("Product2", {
     }
   },
 
-  _1: Trait.required,
-  _2: Trait.required
-}));
+  _1: null,
+  _2: null
+});
 
-var TProduct3 = Trait.compose(TProduct, Trait("Product3", {
+var TProduct3 = _.extend({}, TProduct, {
   productArity: 3,
 
   productElement: function (n) {
@@ -93,12 +92,12 @@ var TProduct3 = Trait.compose(TProduct, Trait("Product3", {
     }
   },
 
-  _1: Trait.required,
-  _2: Trait.required,
-  _3: Trait.required
-}));
+  _1: null,
+  _2: null,
+  _3: null
+});
 
-var TProduct4 = Trait.compose(TProduct, Trait("Product4", {
+var TProduct4 = _.extend({}, TProduct, {
   productArity: 4,
 
   productElement: function (n) {
@@ -116,67 +115,79 @@ var TProduct4 = Trait.compose(TProduct, Trait("Product4", {
     }
   },
 
-  _1: Trait.required,
-  _2: Trait.required,
-  _3: Trait.required,
-  _4: Trait.required
-}));
+  _1: null,
+  _2: null,
+  _3: null,
+  _4: null
+});
 
-var TTuple1 = Trait.compose(TProduct1, Trait("Tuple1", {
+var TTuple1 = _.extend({}, TProduct1, {
   toString: function () {
     return "(" + this._1 + ")";
   }
 
   // TODO case class methods
 
-}));
+});
 
-var TTuple2 = Trait.compose(TProduct2, Trait("Tuple2", {
+var TTuple2 = _.extend({}, TProduct2, {
   toString: function () {
     return "(" + this._1 + "," + this._2 + ")";
   },
 
   swap: function () {
-    return Tuple2(this._2, this._1)
+    return new Tuple2(this._2, this._1)
   }
 
   // TODO case class methods
 
-}));
+});
 
-var TTuple3 = Trait.compose(TProduct3, Trait("Tuple3", {
+var TTuple3 = _.extend({}, TProduct3, {
   toString: function () {
     return "(" + this._1 + "," + this._2 + "," + this._3 + ")";
   }
 
   // TODO case class methods
 
-}));
+});
 
-var TTuple4 = Trait.compose(TProduct4, Trait("Tuple4", {
+var TTuple4 = _.extend({}, TProduct4, {
   toString: function () {
     return "(" + this._1 + "," + this._2 + "," + this._3 + "," + this._4 + ")";
   }
 
   // TODO case class methods
 
-}));
+});
 
 function Tuple1(_1) {
-  return Object.create(Tuple1.prototype, Trait.compose(TTuple1, Trait({_1: _1})))
+  this._1 = _1;
 }
+Tuple1.prototype = TTuple1;
 
 function Tuple2(_1, _2) {
-  return Object.create(Tuple2.prototype, Trait.compose(TTuple2, Trait({_1: _1, _2: _2})))
+  this._1 = _1;
+  this._2 = _2;
 }
+Tuple2.prototype = TTuple2;
 
 function Tuple3(_1, _2, _3) {
-  return Object.create(Tuple3.prototype, Trait.compose(TTuple3, Trait({_1: _1, _2: _2, _3: _3})))
+  this._1 = _1;
+  this._2 = _2;
+  this._3 = _3;
 }
+Tuple3.prototype = TTuple3;
 
 function Tuple4(_1, _2, _3, _4) {
-  return Object.create(Tuple4.prototype, Trait.compose(TTuple4, Trait({_1: _1, _2: _2, _3: _3, _4: _4})))
+  this._1 = _1;
+  this._2 = _2;
+  this._3 = _3;
+  this._4 = _4;
 }
+Tuple4.prototype = TTuple4;
+
+// TODO: More tuples
 
 /**
  * Convenience "factory" function for Tuples
@@ -184,18 +195,17 @@ function Tuple4(_1, _2, _3, _4) {
  * @return {Tuple1|Tuple2|Tuple3|Tuple4}
  */
 function T() {
-  var a = Array.prototype.slice.call(arguments, 0);
-  switch (a.length) {
+  switch (arguments.length) {
     case 1:
-      return Tuple1(a[0]);
+      return new Tuple1(arguments[0]);
     case 2:
-      return Tuple2(a[0], a[1]);
+      return new Tuple2(arguments[0], arguments[1]);
     case 3:
-      return Tuple3(a[0], a[1], a[2]);
+      return new Tuple3(arguments[0], arguments[1], arguments[2]);
     case 4:
-      return Tuple4(a[0], a[1], a[2], a[3]);
+      return new Tuple4(arguments[0], arguments[1], arguments[2], arguments[3]);
     default:
-      throw new Error('Implementation missing')
+      throw new Error('Implementation missing for tuple with arity ' + arguments.length)
   }
 }
 

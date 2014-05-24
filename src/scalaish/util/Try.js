@@ -1,196 +1,246 @@
+import {_} from 'underscore';
+import {T} from '../Product'
 import {__result} from "../helpers/helpers";
-import {Trait} from "../helpers/Trait";
 import {Some, None} from '../Option';
 import {NoSuchElementException, UnsupportedOperationException} from '../Exceptions';
 
-var TTry = Trait("Try", {
-  isFailure: Trait.required,
+var constructors = (function () {
+  var TTry = {
+    isFailure: null,
 
-  isSuccess: Trait.required,
+    isSuccess: null,
 
-  getOrElse: function (def) {
-    return this.isSuccess() ? this.get() : __result(def);
-  },
+    getOrElse: function (def, context) {
+      return this.isSuccess() ? this.get() : __result(def, context);
+    },
 
-  orElse: function (def) {
-    try {
-      return this.isSuccess() ? this : def;
-    }
-    catch (e) {
-      // TODO: NonFatal
-      return Failure(e);
-    }
-  },
-
-  get: Trait.required,
-
-  forEach: Trait.required,
-
-  flatMap: Trait.required,
-
-  map: Trait.required,
-
-  filter: Trait.required,
-
-  // TODO: withFilter
-
-  recoverWith: Trait.required,
-
-  recover: Trait.required,
-
-  toOption: function () {
-    return this.isSuccess() ? Some(this.get()) : None()
-  },
-
-  flatten: Trait.required,
-
-  failed: Trait.required,
-
-  transform: function (s, f) {
-    try {
-      // TODO: (pseudo) pattern matching?
-      if (this.isSuccess()) {
-        return s(this.value)
-      } else if (this.isFailure()) {
-        return f(this.exception)
+    orElse: function (def, context) {
+      try {
+        return this.isSuccess() ? this : __result(def, context);
       }
+      catch (e) {
+        // TODO: NonFatal
+        return new Failure(e);
+      }
+    },
+
+    get: null,
+
+    forEach: null,
+
+    flatMap: null,
+
+    map: null,
+
+    filter: null,
+
+    // TODO: This is the exact same code as in Option
+    withFilter: function (p, context) {
+      var self = this;
+
+      function WithFilter(p, context) {
+        this.p = p;
+        this.context = context;
+      }
+
+      WithFilter.prototype = {
+        map: function (f, context) {
+          return self.filter(this.p, this.context).map(f, context)
+        },
+        flatMap: function (f, context) {
+          return self.filter(this.p, this.context).flatMap(f, context)
+        },
+        foreach: function (f, context) {
+          return self.filter(this.p, this.context).foreach(f, context)
+        },
+        withFilter: function (q, context) {
+          return new WithFilter(function (x) {
+            return this.p.call(x, this.context) && q.call(x, context)
+          }.bind(this))
+        }
+      };
+
+      return new WithFilter(p, context)
+    },
+
+    recoverWith: null,
+
+    recover: null,
+
+    toOption: function () {
+      return this.isSuccess() ? Some(this.get()) : None()
+    },
+
+    flatten: null,
+
+    failed: null,
+
+    transform: function (s, f, context) {
+      try {
+        // TODO: (pseudo) pattern matching?
+        if (this.isSuccess()) {
+          return s.call(context, this.value)
+        } else if (this.isFailure()) {
+          return f.call(context, this.exception)
+        }
+      } catch (e) {
+        // TODO: NonFatal
+        return new Failure(e)
+      }
+    }
+  };
+
+  var TFailure = {
+    exception: null,
+
+    isFailure: function () {
+      return true
+    },
+
+    isSuccess: function () {
+      return false
+    },
+
+    recoverWith: function (f, context) {
+      try {
+        return (true /* TODO */) ? f.call(context, this.exception) : this
+      } catch (e) {
+        // TODO: NonFatal
+        return new Failure(e)
+      }
+    },
+
+    get: function () {
+      throw this.exception
+    },
+
+    flatMap: function () {
+      return this
+    },
+
+    flatten: function () {
+      return this
+    },
+
+    forEach: function () {
+    },
+
+    map: function () {
+      return this
+    },
+
+    filter: function () {
+      return this
+    },
+
+    recover: function (rescueException, context) {
+      try {
+        return (true /* TODO */) ? new Try(rescueException.bind(context, this.exception)) : this
+      } catch (e) {
+        // TODO: NonFatal
+        return new Failure(e)
+      }
+    },
+
+    failed: function () {
+      return new Success(this.exception)
+    }
+  };
+
+  var TSuccess = {
+    value: null,
+
+    isFailure: function () {
+      return false
+    },
+
+    isSuccess: function () {
+      return true
+    },
+
+    recoverWith: function () {
+      return this
+    },
+
+    get: function () {
+      return this.value
+    },
+
+    flatMap: function (f, context) {
+      try {
+        return f.call(context, this.value)
+      } catch (e) {
+        // TODO: NonFatal
+        return new Failure(e)
+      }
+    },
+
+    flatten: function () {
+      return this.value
+    },
+
+    forEach: function (f, context) {
+      f.call(context, this.value)
+    },
+
+    map: function (f, context) {
+      return new Try(f.bind(context, this.value))
+    },
+
+    filter: function (p, context) {
+      try {
+        return p.call(context, this.value) ?
+          this : new Failure(new NoSuchElementException("Predicate does not hold for " + this.value))
+      } catch (e) {
+        // TODO: NonFatal
+        return new Failure(e)
+      }
+    },
+
+    recover: function () {
+      return this
+    },
+
+    failed: function () {
+      return new Failure(new UnsupportedOperationException("Success.failed"))
+    }
+  };
+
+  function Try(r, context) {
+    try {
+      return new Success(r, context)
     } catch (e) {
       // TODO: NonFatal
-      return Failure(e)
+      return new Failure(e)
     }
   }
-});
 
-var TFailure = Trait.compose(TTry, Trait("Failure", {
-  exception: Trait.required,
+  Try.prototype = TTry;
 
-  isFailure: function () {
-    return true
-  },
-
-  isSuccess: function () {
-    return false
-  },
-
-  recoverWith: function (f) {
-    try {
-      return (true /* TODO */) ? f(this.exception) : this
-    } catch (e) {
-      // TODO: NonFatal
-      return Failure(e)
-    }
-  },
-
-  get: function () {
-    throw this.exception
-  },
-
-  flatMap: function () {
-    return this
-  },
-
-  flatten: function () {
-    return this
-  },
-
-  forEach: function () {
-  },
-
-  map: function () {
-    return this
-  },
-
-  filter: function () {
-    return this
-  },
-
-  recover: function (rescueException) {
-    try {
-      return (true /* TODO */) ? Try(rescueException.bind(undefined, this.exception)) : this
-    } catch (e) {
-      // TODO: NonFatal
-      return Failure(e)
-    }
-  },
-
-  failed: function () {
-    return Success(this.exception)
+  function Success(v, context) {
+    this.value = __result(v, context);
   }
-}));
 
-var TSuccess = Trait.compose(TTry, Trait("Success", {
-  value: Trait.required,
+  Success.prototype = _.extend(Object.create(Try.prototype), TSuccess);
 
-  isFailure: function () {
-    return false
-  },
-
-  isSuccess: function () {
-    return true
-  },
-
-  recoverWith: function (f) {
-    return this
-  },
-
-  get: function () {
-    return this.value
-  },
-
-  flatMap: function (f) {
-    try {
-      return f(this.value)
-    } catch (e) {
-      // TODO: NonFatal
-      return Failure(e)
-    }
-  },
-
-  flatten: function () {
-    return this.value
-  },
-
-  forEach: function (f) {
-    f(this.value)
-  },
-
-  map: function (f) {
-    return Try(f.bind(undefined, this.value))
-  },
-
-  filter: function (p) {
-    try {
-      return p(this.value) ? this : Failure(new NoSuchElementException("Predicate does not hold for " + this.value))
-    } catch (e) {
-      // TODO: NonFatal
-      return Failure(e)
-    }
-  },
-
-  recover: function (rescueException) {
-    return this
-  },
-
-  failed: function () {
-    return Failure(new UnsupportedOperationException("Success.failed"))
+  function Failure(e) {
+    this.exception = e;
   }
-}));
+  Failure.prototype = _.extend(Object.create(Try.prototype), TFailure);
 
-function Success(v) {
-  return Object.create(Success.prototype, Trait.compose(TSuccess, Trait({value: __result(v)})))
+  return T(Try, Success, Failure)
+})();
+
+function Try(r, context) {
+  return new constructors._1(r, context);
+}
+
+function Success(v, context) {
+  return new constructors._2(v, context);
 }
 
 function Failure(e) {
-  return Object.create(Failure.prototype, Trait.compose(TFailure, Trait({exception: e})))
-}
-
-function Try(r) {
-  try {
-    return Success(r)
-  } catch (e) {
-    // TODO: NonFatal
-    return Failure(e)
-  }
+  return new constructors._3(e);
 }
 
 export {Try, Success, Failure};
