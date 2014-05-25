@@ -60,4 +60,39 @@ var __clone = function (obj) {
   return copy;
 };
 
-export {__extends, __isConstructor, __isFunction, __result, __clone};
+function Case(o) {
+  this.o = o
+}
+
+Case.prototype = {
+  case: function (className, f, context) {
+    if (this.o.isInstanceOf(className)) {
+      return new Match(f.call(context, this.o._1, this.o._2, this.o._3, this.o._4 /* TODO */))
+    }
+    return this
+  },
+
+  get: function () {
+    throw new Error("MatchError");
+  }
+};
+
+function Match(res) {
+  this.res = res;
+}
+
+Match.prototype = {
+  case: function () {
+    return this
+  },
+
+  get: function () {
+    return this.res;
+  }
+};
+
+function match(caseObj) {
+  return new Case(caseObj)
+}
+
+export {__extends, __isConstructor, __isFunction, __result, __clone, match};

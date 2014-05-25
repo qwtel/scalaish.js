@@ -6,6 +6,7 @@ var Try = require("../dist/cjs/scalaish/util/Try").Try;
 var Success = require("../dist/cjs/scalaish/util/Try").Success;
 var Failure = require("../dist/cjs/scalaish/util/Try").Failure;
 var T = require("../dist/cjs/scalaish/Product").T;
+var match = require('../dist/cjs/scalaish/helpers/helpers').match;
 //import {Random} from '../util/Random';
 //import {T} from '../Product';
 
@@ -139,3 +140,24 @@ console.log(tt === 2);
  console.log(fooBar.hasOwnProperty("foo"));
  console.log(fooBar.hasOwnProperty("bar"));
  */
+
+var caseObj = {
+  _1: 'some value',
+  isInstanceOf: function (n) {
+    return n === 'Some'
+  }
+};
+
+var noOp = function () {
+};
+
+var res = match(caseObj)
+  .case("None", function() {
+    return 'no value'
+  })
+  .case("Some", function (x) {
+    return x + ', yay'
+  })
+  .get();
+
+console.log(res)
