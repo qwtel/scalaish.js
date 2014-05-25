@@ -148,11 +148,8 @@ var caseObj = {
   }
 };
 
-var noOp = function () {
-};
-
 var res = match(caseObj)
-  .case("None", function() {
+  .case("None", function () {
     return 'no value'
   })
   .case("Some", function (x) {

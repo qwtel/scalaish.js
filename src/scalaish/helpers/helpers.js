@@ -74,6 +74,10 @@ Case.prototype = {
 
   get: function () {
     throw new Error("MatchError");
+  },
+
+  default: function (f, context) {
+    return new Match(f.call(context, this.o._1, this.o._2, this.o._3, this.o._4 /* TODO */))
   }
 };
 
@@ -88,6 +92,10 @@ Match.prototype = {
 
   get: function () {
     return this.res;
+  },
+
+  default: function (f, context) {
+    return this
   }
 };
 
