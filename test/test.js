@@ -12,14 +12,17 @@ var Either = either.Either;
 var Left = either.Left;
 var Right = either.Right;
 
+var Random = require('../dist/cjs/scalaish/util/Random').Random;
+
 var helpers = require('../dist/cjs/scalaish/helpers/helpers');
+var __result = helpers.__result;
 var println = helpers.println;
 var time = helpers.time;
 var printTime = helpers.printTime;
 
 var match = require('../dist/cjs/scalaish/helpers/match').match;
 
-var NUM = 1000000;
+var NUM = 100000;
 
 console.log(Right(1).swap().left().map(function (x) {
   return x + 1
@@ -34,11 +37,13 @@ println("Create " + NUM + " JSObject instances:",
   })
 );
 
-println("Create " + NUM + " Either instances:",
+println("Map " + NUM + " Either instances:",
   time(function () {
     var x;
     for (var i = 0; i < NUM; i++) {
-      x = Left(i);
+      x = Right(1).right().map(function (x) {
+        return x + 1
+      })
     }
   })
 );
@@ -90,11 +95,13 @@ println(o.withFilter(function (x) {
 }).get() === 2);
 
 
-println("Create " + NUM + " Option instances:",
+println("Map " + NUM + " Option instances:",
   time(function () {
     var x;
     for (var i = 0; i < NUM; i++) {
-      x = Option(i)
+      x = Option(i).map(function (x) {
+        return x + 1;
+      }).get()
     }
   })
 );
@@ -126,11 +133,18 @@ println("Create " + NUM + " Tuple instances:",
  println(!o.isInstanceOf("None"));
  */
 
-var t = Try(1);
+var rnd = new Random();
+
+var t = Try(maybeThrowAnEx).transform(function(v) {
+  return Success(v + ' was a Success');
+}, function(e) {
+  return Success('Something went wrong ' + e)
+}).forEach(println);
+
 //println(t instanceof Success);
 //println(t instanceof Try);
 //println(!(t instanceof Failure));
-var tt = t.withFilter(function (x) {
+var tt = Try(1).withFilter(function (x) {
   return x >= 1
 }).map(function (x) {
   return x + 1;
@@ -230,6 +244,35 @@ println("Do " + NUM + " native switch-case:",
       }
     }
   })
+);
+
+var throwableToLeft = function (block) {
+  try {
+    return Right(__result(block))
+  }
+  catch (ex) {
+    return Left(ex)
+  }
+};
+
+function maybeThrowAnEx() {
+  if (rnd.nextBoolean()) {
+    throw new Error()
+  } else {
+    return 'result'
+  }
+}
+
+println(throwableToLeft(maybeThrowAnEx).merge());
+
+println(
+  Either.cond(new Random().nextBoolean(), 'B', 'A')
+    .right().flatMap(function (b) {
+      return Right('I knew it would be ' + b)
+    })
+    .left().map(function (a) {
+      return 'I knew it would be ' + a + '???'
+    })
 );
 
 //println(res2);

@@ -90,12 +90,10 @@ TryImpl.prototype = _.extend(Object.create(Any.prototype), {
 
   transform: function (s, f, context) {
     try {
-      // TODO: (pseudo) pattern matching?
-      if (this.isSuccess) {
-        return s.call(context, this.value)
-      } else if (this.isFailure) {
-        return f.call(context, this.exception)
-      }
+      return this.match()
+        .case(Success, s, context)
+        .case(Failure, f, context)
+        .get()
     } catch (e) {
       // TODO: NonFatal
       return Failure(e)

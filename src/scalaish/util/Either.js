@@ -27,6 +27,14 @@ EitherImpl.prototype = _.extend(Object.create(Any.prototype), {
   Either: true,
   companion: Either,
 
+  // patching merge in here
+  merge: function () {
+    return this.match()
+      .case(Left, pipe)
+      .case(Right, pipe)
+      .get()
+  },
+
   /**
    * Projects this `Either` as a `Left`.
    */
@@ -390,7 +398,7 @@ Either.RightProjection.unapply = function (rightProjection) {
  * @return {EitherImpl}
  */
 Either.cond = function (test, right, left, context) {
-  return test.call(context) ? Right(right) : Left(left)
+  return __result(test, context) ? Right(right) : Left(left)
 };
 
 function Left(a) {

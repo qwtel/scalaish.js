@@ -152,16 +152,16 @@ Match.prototype = {
 /**
  * Starts a pseudo pattern-match.
  *
- * @param {Any|object|*} caseObj
+ * @param {Any|object|*} o
  * @return {Case}
  */
-function match(caseObj) {
-  if (typeof caseObj['Any'] !== 'undefined') {
-    return new ScalaishCase(caseObj)
-  } else if (__isFunction(caseObj)) {
-    return new ConstructorCase(caseObj)
+function match(o) {
+  if (typeof o['Any'] !== 'undefined') {
+    return new ScalaishCase(o)
+  } else if (__isFunction(o)) {
+    return new ConstructorCase(o)
   } else {
-    return new Case(caseObj)
+    return new Case(o)
   }
 }
 
