@@ -1,4 +1,5 @@
 import {_} from 'underscore';
+import {Any} from './Any';
 import {IndexOutOfBoundsException} from "./Exceptions";
 
 /**
@@ -8,6 +9,7 @@ import {IndexOutOfBoundsException} from "./Exceptions";
  * all case classes implement `Product` with synthetically generated methods.
  */
 var TProduct = {
+  Product: true,
 
   /**
    * The n^th^ element of this product, 0-based.  In other words, for a
@@ -44,6 +46,8 @@ var TProduct = {
 };
 
 var TProduct1 = _.extend({}, TProduct, {
+  Product1: true,
+
   productArity: 1,
 
   productElement: function (n) {
@@ -59,6 +63,8 @@ var TProduct1 = _.extend({}, TProduct, {
 });
 
 var TProduct2 = _.extend({}, TProduct, {
+  Product2: true,
+
   productArity: 2,
 
   productElement: function (n) {
@@ -77,6 +83,8 @@ var TProduct2 = _.extend({}, TProduct, {
 });
 
 var TProduct3 = _.extend({}, TProduct, {
+  Product3: true,
+
   productArity: 3,
 
   productElement: function (n) {
@@ -98,6 +106,8 @@ var TProduct3 = _.extend({}, TProduct, {
 });
 
 var TProduct4 = _.extend({}, TProduct, {
+  Product4: true,
+
   productArity: 4,
 
   productElement: function (n) {
@@ -122,6 +132,8 @@ var TProduct4 = _.extend({}, TProduct, {
 });
 
 var TTuple1 = _.extend({}, TProduct1, {
+  Tuple1: true,
+
   toString: function () {
     return "(" + this._1 + ")";
   }
@@ -131,6 +143,8 @@ var TTuple1 = _.extend({}, TProduct1, {
 });
 
 var TTuple2 = _.extend({}, TProduct2, {
+  Tuple2: true,
+
   toString: function () {
     return "(" + this._1 + "," + this._2 + ")";
   },
@@ -144,6 +158,8 @@ var TTuple2 = _.extend({}, TProduct2, {
 });
 
 var TTuple3 = _.extend({}, TProduct3, {
+  Tuple3: true,
+
   toString: function () {
     return "(" + this._1 + "," + this._2 + "," + this._3 + ")";
   }
@@ -153,6 +169,8 @@ var TTuple3 = _.extend({}, TProduct3, {
 });
 
 var TTuple4 = _.extend({}, TProduct4, {
+  Tuple4: true,
+
   toString: function () {
     return "(" + this._1 + "," + this._2 + "," + this._3 + "," + this._4 + ")";
   }
@@ -164,20 +182,20 @@ var TTuple4 = _.extend({}, TProduct4, {
 function Tuple1(_1) {
   this._1 = _1;
 }
-Tuple1.prototype = TTuple1;
+Tuple1.prototype = _.extend(Object.create(Any.prototype), TTuple1);
 
 function Tuple2(_1, _2) {
   this._1 = _1;
   this._2 = _2;
 }
-Tuple2.prototype = TTuple2;
+Tuple2.prototype = _.extend(Object.create(Any.prototype), TTuple2);
 
 function Tuple3(_1, _2, _3) {
   this._1 = _1;
   this._2 = _2;
   this._3 = _3;
 }
-Tuple3.prototype = TTuple3;
+Tuple3.prototype = _.extend(Object.create(Any.prototype), TTuple3);
 
 function Tuple4(_1, _2, _3, _4) {
   this._1 = _1;
@@ -185,7 +203,7 @@ function Tuple4(_1, _2, _3, _4) {
   this._3 = _3;
   this._4 = _4;
 }
-Tuple4.prototype = TTuple4;
+Tuple4.prototype = _.extend(Object.create(Any.prototype), TTuple4);
 
 // TODO: More tuples
 

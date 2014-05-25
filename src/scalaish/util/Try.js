@@ -1,4 +1,5 @@
 import {_} from 'underscore';
+import {Any} from '../Any';
 import {T} from '../Product'
 import {__result} from "../helpers/helpers";
 import {Some, None} from '../Option';
@@ -6,6 +7,8 @@ import {NoSuchElementException, UnsupportedOperationException} from '../Exceptio
 
 var constructors = (function () {
   var TTry = {
+    Try: true,
+
     isFailure: null,
 
     isSuccess: null,
@@ -91,6 +94,8 @@ var constructors = (function () {
   };
 
   var TFailure = {
+    Failure: true,
+
     exception: null,
 
     isFailure: function () {
@@ -148,6 +153,8 @@ var constructors = (function () {
   };
 
   var TSuccess = {
+    Success: true,
+
     value: null,
 
     isFailure: function () {
@@ -215,7 +222,7 @@ var constructors = (function () {
     }
   }
 
-  Try.prototype = TTry;
+  Try.prototype = _.extend(Object.create(Any.prototype), TTry);
 
   function Success(v, context) {
     this.value = __result(v, context);
@@ -226,21 +233,42 @@ var constructors = (function () {
   function Failure(e) {
     this.exception = e;
   }
+
   Failure.prototype = _.extend(Object.create(Try.prototype), TFailure);
 
   return T(Try, Success, Failure)
 })();
 
 function Try(r, context) {
-  return new constructors._1(r, context);
+  return Try.apply(r, context)
 }
+Try.apply = function (r, context) {
+  return new constructors._1(r, context);
+};
+Try.unapply = function (t) {
+  return t.isSuccess() ?
+    Success.unapply(t) :
+    Failure.unapply(t)
+};
 
 function Success(v, context) {
-  return new constructors._2(v, context);
+  return Success.apply(v, context);
 }
+Success.apply = function (v, context) {
+  return new constructors._2(v, context);
+};
+Success.unapply = function (s) {
+  return s.value;
+};
 
 function Failure(e) {
-  return new constructors._3(e);
+  return Failure.apply(e);
 }
+Failure.apply = function (e) {
+  return new constructors._3(e);
+};
+Failure.unapply = function (e) {
+  return e.exception;
+};
 
 export {Try, Success, Failure};

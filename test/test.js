@@ -6,7 +6,13 @@ var Try = require("../dist/cjs/scalaish/util/Try").Try;
 var Success = require("../dist/cjs/scalaish/util/Try").Success;
 var Failure = require("../dist/cjs/scalaish/util/Try").Failure;
 var T = require("../dist/cjs/scalaish/Product").T;
-var match = require('../dist/cjs/scalaish/helpers/helpers').match;
+
+var helpers = require('../dist/cjs/scalaish/helpers/helpers');
+var match = helpers.match;
+var println = helpers.println;
+var time = helpers.time;
+var printTime = helpers.printTime;
+
 //import {Random} from '../util/Random';
 //import {T} from '../Product';
 
@@ -46,59 +52,58 @@ var o = Option(1);
 //console.log(o instanceof Some);
 //console.log(o instanceof Option);
 //console.log(!(o instanceof None));
-console.log(o.get() === 1);
-console.log(o.withFilter(function (x) {
+println(o.get() === 1);
+println(o.withFilter(function (x) {
   return x >= 1
 }).map(function (x) {
   return x + 1
 }).get() === 2);
 
-var start = new Date().getTime();
-for (var i = 0; i < 100000; i++) {
-  Option(i)
-}
-var now = new Date().getTime();
-console.log(now - start);
+printTime(function () {
+  var x;
+  for (var i = 0; i < 100000; i++) {
+    x = Option(i)
+  }
+});
 
-var start = new Date().getTime();
-for (i = 0; i < 100000; i++) {
-  x = [null, null, null]
-}
-var now = new Date().getTime();
-console.log(now - start);
+printTime(function () {
+  var x;
+  for (var i = 0; i < 100000; i++) {
+    x = [null, null, null, null]
+  }
+});
 
-var start = new Date().getTime();
-var x;
-for (var i = 0; i < 100000; i++) {
-  x = T(null, null, null)
-}
-var now = new Date().getTime();
-console.log(now - start);
+printTime(function () {
+  var x;
+  for (var i = 0; i < 100000; i++) {
+    x = T(null, null, null, null)
+  }
+});
 
 /*
- console.log(o.isInstanceOf("Some"));
- console.log(o.isInstanceOf("Option"));
- console.log(o.isInstanceOf("Any"));
- console.log(!o.isInstanceOf("Other"));
- console.log(!o.isInstanceOf("None"));
+ println(o.isInstanceOf("Some"));
+ println(o.isInstanceOf("Option"));
+ println(o.isInstanceOf("Any"));
+ println(!o.isInstanceOf("Other"));
+ println(!o.isInstanceOf("None"));
  */
 
 var t = Try(1);
-//console.log(t instanceof Success);
-//console.log(t instanceof Try);
-//console.log(!(t instanceof Failure));
+//println(t instanceof Success);
+//println(t instanceof Try);
+//println(!(t instanceof Failure));
 var tt = t.withFilter(function (x) {
   return x >= 1
 }).map(function (x) {
   return x + 1;
 }).get();
-console.log(tt === 2);
+println(tt === 2);
 
 //None().get();
 
 /*
  function testRandom(r) {
- console.log(r.nextInt());
+ println(r.nextInt());
  var i = 0;
  var t = r.nextInt();
 
@@ -109,52 +114,75 @@ console.log(tt === 2);
  break;
  }
  }
- console.log(r.nextNumber());
- console.log(r.nextGaussian());
- console.log(r.nextBoolean());
- console.log(r.nextString(3));
- console.log(r.nextPrintableChar());
+ println(r.nextNumber());
+ println(r.nextGaussian());
+ println(r.nextBoolean());
+ println(r.nextString(3));
+ println(r.nextPrintableChar());
  }
 
- var r = Random();
+ var r = new Random();
  testRandom(r);
 
- r = new Random();
+ r = new new Random();
  testRandom(r);
  */
 
 /*
  var fooBar = Trait.create(Object.prototype, TFooBar);
- console.log(fooBar.isInstanceOf("Bar"));
- console.log(fooBar.isInstanceOf("Foo"));
- console.log(fooBar.isInstanceOf("Any"));
- console.log(!fooBar.isInstanceOf("Other"));
- console.log(fooBar.hasOwnProperty("foo"));
- console.log(fooBar.hasOwnProperty("bar"));
+ println(fooBar.isInstanceOf("Bar"));
+ println(fooBar.isInstanceOf("Foo"));
+ println(fooBar.isInstanceOf("Any"));
+ println(!fooBar.isInstanceOf("Other"));
+ println(fooBar.hasOwnProperty("foo"));
+ println(fooBar.hasOwnProperty("bar"));
 
  fooBar = Object.create(Object.prototype, TFooBar);
- console.log(fooBar.isInstanceOf("Bar"));
- console.log(fooBar.isInstanceOf("Foo"));
- console.log(fooBar.isInstanceOf("Any"));
- console.log(!fooBar.isInstanceOf("Other"));
- console.log(fooBar.hasOwnProperty("foo"));
- console.log(fooBar.hasOwnProperty("bar"));
+ println(fooBar.isInstanceOf("Bar"));
+ println(fooBar.isInstanceOf("Foo"));
+ println(fooBar.isInstanceOf("Any"));
+ println(!fooBar.isInstanceOf("Other"));
+ println(fooBar.hasOwnProperty("foo"));
+ println(fooBar.hasOwnProperty("bar"));
  */
 
-var caseObj = {
-  _1: 'some value',
-  isInstanceOf: function (n) {
-    return n === 'Some'
-  }
-};
+var caseObj = Option('some value');
 
 var res = match(caseObj)
-  .case("None", function () {
+  .case(None, function () {
     return 'no value'
   })
-  .case("Some", function (x) {
+  .case(Some, function (x) {
     return x + ', yay'
   })
   .get();
 
-console.log(res)
+println(res);
+
+printTime(function() {
+  var res2;
+  for (var i = 0; i<100000; i++) {
+    res2 = match("test")
+      .case("something")
+      .case("somethingElse")
+      .case("somethingElseElse")
+      .case('test', function(s) {
+        return s;
+      })
+      .get();
+  }
+});
+
+printTime(function() {
+  var res2;
+  for (var i = 0; i<100000; i++) {
+    switch("test") {
+      case "something": break;
+      case "somethingElse": break;
+      case "somethingElseElse": break;
+      case "test": res2 = "test"; break;
+    }
+  }
+});
+
+//println(res2);

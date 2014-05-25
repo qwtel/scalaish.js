@@ -1,10 +1,13 @@
 import {_} from 'underscore';
 import {T} from './Product';
 import {__result} from "./helpers/helpers";
+import {Any} from './Any';
 import {NoSuchElementException} from './Exceptions';
 
 var constructors = (function () {
+
   var TOption = {
+    Option: true,
 
     /**
      * Returns true if the option is $none, false otherwise.
@@ -270,6 +273,8 @@ var constructors = (function () {
   };
 
   var TSome = {
+    Some: true,
+
     /**
      * @override
      * @inheritDoc
@@ -288,6 +293,8 @@ var constructors = (function () {
   };
 
   var TNone = {
+    None: true,
+
     /**
      * @override
      * @inheritDoc
@@ -319,7 +326,7 @@ var constructors = (function () {
     }
   }
 
-  Option.prototype = TOption;
+  Option.prototype = _.extend(Object.create(Any.prototype), TOption);
 
   /**
    * @param {B} x
@@ -345,16 +352,38 @@ var constructors = (function () {
 })();
 
 function Option(x) {
-  return new constructors._1(x)
+  return Option.apply(x);
 }
+Option.apply = function(x) {
+  return new constructors._1(x)
+};
+Option.unapply = function(opt) {
+  if (opt.isEmpty()) {
+    return None.unapply(opt);
+  } else {
+    return Some.unapply(opt)
+  }
+};
 
 function Some(x) {
-  return new constructors._2(x)
+  return Some.apply(x);
 }
+Some.apply = function(x) {
+  return new constructors._2(x)
+};
+Some.unapply = function(opt) {
+  return opt.get();
+};
 
 function None() {
-  return new constructors._3()
+  return None.apply()
 }
+None.apply = function(x) {
+  return new constructors._3(x)
+};
+None.unapply = function(opt) {
+  return null;
+};
 
 export {Option, Some, None};
 

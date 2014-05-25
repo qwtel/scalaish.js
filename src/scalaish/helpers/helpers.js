@@ -66,10 +66,15 @@ function Case(o) {
 
 Case.prototype = {
   case: function (className, f, context) {
-    if (this.o.isInstanceOf(className)) {
-      return new Match(f.call(context, this.o._1, this.o._2, this.o._3, this.o._4 /* TODO */))
+    if (__isFunction(className) && this.o.isInstanceOf(className)) { // TODO: HACK
+      return new Match(f.call(context, className.unapply(this.o)))
     }
-    return this
+    else if (this.o === className) { // TODO: equals
+      return new Match(f.call(context, this.o))
+    }
+    else {
+      return this
+    }
   },
 
   get: function () {
@@ -77,7 +82,7 @@ Case.prototype = {
   },
 
   default: function (f, context) {
-    return new Match(f.call(context, this.o._1, this.o._2, this.o._3, this.o._4 /* TODO */))
+    return new Match(f.call(context, this.o))
   }
 };
 
@@ -103,4 +108,17 @@ function match(caseObj) {
   return new Case(caseObj)
 }
 
-export {__extends, __isConstructor, __isFunction, __result, __clone, match};
+var println = console.log;
+
+function time(f, context) {
+  var start = new Date().getTime();
+  f.call(context);
+  var now = new Date().getTime();
+  return now - start
+}
+
+function printTime(f, context) {
+  println(time(f, context))
+}
+
+export {__extends, __isConstructor, __isFunction, __result, __clone, match, println, time, printTime};

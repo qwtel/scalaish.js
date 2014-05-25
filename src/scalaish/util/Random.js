@@ -1,3 +1,6 @@
+import {_} from 'underscore';
+import {Any} from '../Any';
+
 /**
  * http://stackoverflow.com/a/1527820/870615
  *
@@ -10,6 +13,7 @@ function range(min, max) {
 }
 
 var TRandom = {
+  Random: true,
 
   random: Math.random,
 
@@ -82,6 +86,6 @@ function Random(random) {
     this.random = random;
   }
 }
-Random.prototype = TRandom;
+Random.prototype = _.extend(Object.create(Any.prototype), TRandom);
 
 export {Random};
