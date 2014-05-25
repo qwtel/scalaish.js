@@ -6,12 +6,42 @@ var Try = require("../dist/cjs/scalaish/util/Try").Try;
 var Success = require("../dist/cjs/scalaish/util/Try").Success;
 var Failure = require("../dist/cjs/scalaish/util/Try").Failure;
 var T = require("../dist/cjs/scalaish/Tuple").T;
+var either = require('../dist/cjs/scalaish/util/Either');
+
+var Either = either.Either;
+var Left = either.Left;
+var Right = either.Right;
 
 var helpers = require('../dist/cjs/scalaish/helpers/helpers');
-var match = helpers.match;
 var println = helpers.println;
 var time = helpers.time;
 var printTime = helpers.printTime;
+
+var match = require('../dist/cjs/scalaish/helpers/match').match;
+
+var NUM = 1000000;
+
+console.log(Right(1).swap().left().map(function (x) {
+  return x + 1
+}));
+
+println("Create " + NUM + " JSObject instances:",
+  time(function () {
+    var x;
+    for (var i = 0; i < NUM; i++) {
+      x = {};
+    }
+  })
+);
+
+println("Create " + NUM + " Either instances:",
+  time(function () {
+    var x;
+    for (var i = 0; i < NUM; i++) {
+      x = Left(i);
+    }
+  })
+);
 
 //import {Random} from '../util/Random';
 //import {T} from '../Product';
@@ -59,26 +89,34 @@ println(o.withFilter(function (x) {
   return x + 1
 }).get() === 2);
 
-printTime(function () {
-  var x;
-  for (var i = 0; i < 100000; i++) {
-    x = Option(i)
-  }
-});
 
-printTime(function () {
-  var x;
-  for (var i = 0; i < 100000; i++) {
-    x = [null, null, null, null]
-  }
-});
+println("Create " + NUM + " Option instances:",
+  time(function () {
+    var x;
+    for (var i = 0; i < NUM; i++) {
+      x = Option(i)
+    }
+  })
+);
 
-printTime(function () {
-  var x;
-  for (var i = 0; i < 100000; i++) {
-    x = T(null, null, null, null)
-  }
-});
+println("Create " + NUM + " JSArray instances:",
+  time(function () {
+    var x;
+    for (var i = 0; i < NUM; i++) {
+      x = [null, null, null, null]
+    }
+  })
+);
+
+
+println("Create " + NUM + " Tuple instances:",
+  time(function () {
+    var x;
+    for (var i = 0; i < NUM; i++) {
+      x = T(null, null, null, null)
+    }
+  })
+);
 
 /*
  println(o.isInstanceOf("Some"));
@@ -159,30 +197,39 @@ var res = match(caseObj)
 
 println(res);
 
-printTime(function() {
-  var res2;
-  for (var i = 0; i<100000; i++) {
-    res2 = match("test")
-      .case("something")
-      .case("somethingElse")
-      .case("somethingElseElse")
-      .case('test', function(s) {
-        return s;
-      })
-      .get();
-  }
-});
-
-printTime(function() {
-  var res2;
-  for (var i = 0; i<100000; i++) {
-    switch("test") {
-      case "something": break;
-      case "somethingElse": break;
-      case "somethingElseElse": break;
-      case "test": res2 = "test"; break;
+println("Do " + NUM + " pattern matches:",
+  time(function () {
+    var res2;
+    for (var i = 0; i < NUM; i++) {
+      res2 = match("test")
+        .case("something")
+        .case("somethingElse")
+        .case("somethingElseElse")
+        .case('test', function (s) {
+          return s;
+        })
+        .get();
     }
-  }
-});
+  })
+);
+
+println("Do " + NUM + " native switch-case:",
+  time(function () {
+    var res2;
+    for (var i = 0; i < NUM; i++) {
+      switch ("test") {
+        case "something":
+          break;
+        case "somethingElse":
+          break;
+        case "somethingElseElse":
+          break;
+        case "test":
+          res2 = "test";
+          break;
+      }
+    }
+  })
+);
 
 //println(res2);

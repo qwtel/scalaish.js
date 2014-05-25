@@ -1,8 +1,8 @@
 import {_} from 'underscore';
-import {T} from './Product';
 import {__result} from "./helpers/helpers";
 import {Any} from './Any';
 import {NoSuchElementException} from './Exceptions';
+import {Left, Right} from './util/Either';
 
 /**
  * @param {B} x
@@ -33,7 +33,7 @@ OptionImpl.prototype = _.extend(Object.create(Any.prototype), {
    * @return {boolean}
    */
   isDefined: function () {
-    return !this.isEmpty()
+    return !this.isEmpty
   },
 
   /**
@@ -53,7 +53,7 @@ OptionImpl.prototype = _.extend(Object.create(Any.prototype), {
    * @return {A}
    */
   getOrElse: function (def, context) {
-    if (this.isEmpty()) {
+    if (this.isEmpty) {
       return __result(def, context);
     } else {
       return this.get()
@@ -86,7 +86,7 @@ OptionImpl.prototype = _.extend(Object.create(Any.prototype), {
    * @see forEach
    */
   map: function (f, context) {
-    if (this.isEmpty()) {
+    if (this.isEmpty) {
       return None()
     } else {
       return Some(f.call(context, this.get()))
@@ -111,7 +111,7 @@ OptionImpl.prototype = _.extend(Object.create(Any.prototype), {
      *  @param f {function(A): B} the function to apply if nonempty.
      */
     return function (f, context) {
-      if (this.isEmpty()) {
+      if (this.isEmpty) {
         return __result(ifEmpty)
       } else {
         return f.call(context, this.get())
@@ -133,7 +133,7 @@ OptionImpl.prototype = _.extend(Object.create(Any.prototype), {
    * @see forEach
    */
   flatMap: function (f, context) {
-    if (this.isEmpty()) {
+    if (this.isEmpty) {
       return None()
     } else {
       return f.call(context, this.get())
@@ -141,7 +141,7 @@ OptionImpl.prototype = _.extend(Object.create(Any.prototype), {
   },
 
   flatten: function () {
-    if (this.isEmpty()) {
+    if (this.isEmpty) {
       return None()
     } else {
       return this.get()
@@ -156,7 +156,7 @@ OptionImpl.prototype = _.extend(Object.create(Any.prototype), {
    * @return {OptionImpl.<A>}
    */
   filter: function (p, context) {
-    if (this.isEmpty() || p.call(context, this.get())) {
+    if (this.isEmpty || p.call(context, this.get())) {
       return this;
     } else {
       return None()
@@ -171,7 +171,7 @@ OptionImpl.prototype = _.extend(Object.create(Any.prototype), {
    * @return {OptionImpl.<A>}
    */
   filterNot: function (p, context) {
-    if (this.isEmpty() || !p.call(context, this.get())) {
+    if (this.isEmpty || !p.call(context, this.get())) {
       return this;
     } else {
       return None()
@@ -182,9 +182,11 @@ OptionImpl.prototype = _.extend(Object.create(Any.prototype), {
     return this.isDefined()
   },
 
+  // TODO: This is the exact same code as in Try
   withFilter: function (p, context) {
     var self = this;
 
+    // TODO: Use pseudo case class?
     function WithFilter(p, context) {
       this.p = p;
       this.context = context;
@@ -202,8 +204,8 @@ OptionImpl.prototype = _.extend(Object.create(Any.prototype), {
       },
       withFilter: function (q, context) {
         return new WithFilter(function (x) {
-          return this.p.call(x, this.context) && q.call(x, context)
-        }.bind(this))
+          return self.p.call(self.context, x) && q.call(context, x)
+        }, context)
       }
     };
 
@@ -219,7 +221,7 @@ OptionImpl.prototype = _.extend(Object.create(Any.prototype), {
    */
   contains: function (elem) {
     // TODO: equals?
-    return !this.isEmpty() && this.get() === elem
+    return !this.isEmpty && this.get() === elem
   },
 
   /**
@@ -231,7 +233,7 @@ OptionImpl.prototype = _.extend(Object.create(Any.prototype), {
    * @return {boolean}
    */
   exists: function (p, context) {
-    return !this.isEmpty() && p.call(context, this.get())
+    return !this.isEmpty && p.call(context, this.get())
   },
 
   /**
@@ -242,7 +244,7 @@ OptionImpl.prototype = _.extend(Object.create(Any.prototype), {
    * @return {boolean}
    */
   forAll: function (p, context) {
-    return this.isEmpty() || p.call(context, this.get())
+    return this.isEmpty || p.call(context, this.get())
   },
 
   /**
@@ -256,7 +258,7 @@ OptionImpl.prototype = _.extend(Object.create(Any.prototype), {
    * @see flatMap
    */
   forEach: function (f, context) {
-    if (!this.isEmpty()) return f.call(context, this.get())
+    if (!this.isEmpty) return f.call(context, this.get())
   },
 
   // TODO: collect
@@ -269,21 +271,46 @@ OptionImpl.prototype = _.extend(Object.create(Any.prototype), {
    * @return {OptionImpl.<A>}
    */
   orElse: function (alternative) {
-    if (this.isEmpty()) {
+    if (this.isEmpty) {
       return __result(alternative)
     } else {
       return this
     }
-  }
+  },
 
   // TODO: iterator
 
   // TODO: toList
 
-  // TODO: toRight
+  /**
+   * Returns a [[scala.util.Left]] containing the given
+   * argument `left` if this $option is empty, or
+   * a [[scala.util.Right]] containing this $option's value if
+   * this is nonempty.
+   *
+   * @template X
+   * @param {X|function(): X} left - the expression to evaluate and return if this is empty
+   * @return {EitherImpl}
+   * @see toLeft
+   */
+  toRight: function(left, context) {
+    return this.isEmpty ? Left(__result(left, context)) : Right(this.get())
+  },
 
-  // TODO: toLeft
-
+  /**
+   * Returns a [[scala.util.Right]] containing the given
+   * argument `right` if this is empty, or
+   * a [[scala.util.Left]] containing this $option's value
+   * if this $option is nonempty.
+   *
+   * @template X
+   * @param {X|function(): X} right - the expression to evaluate and return if this is empty
+   * @return {EitherImpl}
+   * @see toRight
+   */
+  toLeft: function(right, context) {
+    return this.isEmpty ? Right(__result(right, context)) : Left(this.get())
+  }
 });
 
 /**
@@ -311,9 +338,7 @@ SomeImpl.prototype = _.extend(Object.create(OptionImpl.prototype), {
    * @override
    * @inheritDoc
    */
-  isEmpty: function () {
-    return false;
-  }
+  isEmpty: false
 });
 
 /**
@@ -339,9 +364,7 @@ NoneImpl.prototype = _.extend(Object.create(OptionImpl.prototype), {
    * @override
    * @inheritDoc
    */
-  isEmpty: function () {
-    return true;
-  }
+  isEmpty: true
 });
 
 function Option(x) {
@@ -351,7 +374,7 @@ Option.apply = function (x) {
   return new OptionImpl(x)
 };
 Option.unapply = function (opt) {
-  if (opt.isEmpty()) {
+  if (opt.isEmpty) {
     return None.unapply(opt);
   } else {
     return Some.unapply(opt)

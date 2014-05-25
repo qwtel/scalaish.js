@@ -23,12 +23,12 @@ TryImpl.prototype = _.extend(Object.create(Any.prototype), {
   isSuccess: null,
 
   getOrElse: function (def, context) {
-    return this.isSuccess() ? this.get() : __result(def, context);
+    return this.isSuccess ? this.get() : __result(def, context);
   },
 
   orElse: function (def, context) {
     try {
-      return this.isSuccess() ? this : __result(def, context);
+      return this.isSuccess ? this : __result(def, context);
     }
     catch (e) {
       // TODO: NonFatal
@@ -50,6 +50,7 @@ TryImpl.prototype = _.extend(Object.create(Any.prototype), {
   withFilter: function (p, context) {
     var self = this;
 
+    // TODO: Use pseudo case class?
     function WithFilter(p, context) {
       this.p = p;
       this.context = context;
@@ -67,8 +68,8 @@ TryImpl.prototype = _.extend(Object.create(Any.prototype), {
       },
       withFilter: function (q, context) {
         return new WithFilter(function (x) {
-          return this.p.call(x, this.context) && q.call(x, context)
-        }.bind(this))
+          return self.p.call(self.context, x) && q.call(context, x)
+        }, context)
       }
     };
 
@@ -80,7 +81,7 @@ TryImpl.prototype = _.extend(Object.create(Any.prototype), {
   recover: null,
 
   toOption: function () {
-    return this.isSuccess() ? Some(this.get()) : None()
+    return this.isSuccess ? Some(this.get()) : None()
   },
 
   flatten: null,
@@ -90,9 +91,9 @@ TryImpl.prototype = _.extend(Object.create(Any.prototype), {
   transform: function (s, f, context) {
     try {
       // TODO: (pseudo) pattern matching?
-      if (this.isSuccess()) {
+      if (this.isSuccess) {
         return s.call(context, this.value)
-      } else if (this.isFailure()) {
+      } else if (this.isFailure) {
         return f.call(context, this.exception)
       }
     } catch (e) {
@@ -112,13 +113,9 @@ SuccessImpl.prototype = _.extend(Object.create(TryImpl.prototype), {
 
   value: null,
 
-  isFailure: function () {
-    return false
-  },
+  isFailure: false,
 
-  isSuccess: function () {
-    return true
-  },
+  isSuccess: true,
 
   recoverWith: function () {
     return this
@@ -178,13 +175,9 @@ FailureImpl.prototype = _.extend(Object.create(TryImpl.prototype), {
 
   exception: null,
 
-  isFailure: function () {
-    return true
-  },
+  isFailure: true,
 
-  isSuccess: function () {
-    return false
-  },
+  isSuccess: false,
 
   recoverWith: function (f, context) {
     try {
@@ -239,7 +232,7 @@ Try.apply = function (r, context) {
   return new TryImpl(r, context);
 };
 Try.unapply = function (t) {
-  return t.isSuccess() ?
+  return t.isSuccess ?
     Success.unapply(t) :
     Failure.unapply(t)
 };

@@ -1,3 +1,4 @@
+import {match} from './helpers/match';
 import {__isFunction} from './helpers/helpers';
 
 function Any() {
@@ -16,6 +17,10 @@ Any.prototype = {
 
   getClass: function () {
     // TODO
+  },
+
+  match: function() {
+    return match(this)
   }
 };
 
