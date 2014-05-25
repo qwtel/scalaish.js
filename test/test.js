@@ -5,7 +5,7 @@ var None = require("../dist/cjs/scalaish/Option").None;
 var Try = require("../dist/cjs/scalaish/util/Try").Try;
 var Success = require("../dist/cjs/scalaish/util/Try").Success;
 var Failure = require("../dist/cjs/scalaish/util/Try").Failure;
-var T = require("../dist/cjs/scalaish/Product").T;
+var T = require("../dist/cjs/scalaish/Tuple").T;
 
 var helpers = require('../dist/cjs/scalaish/helpers/helpers');
 var match = helpers.match;

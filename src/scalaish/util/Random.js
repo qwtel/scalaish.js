@@ -12,7 +12,18 @@ function range(min, max) {
   return Math.floor(this.random() * (max - min) + min);
 }
 
-var TRandom = {
+/**
+ * @param {function} random You can supply your own random implementation
+ * @constructor
+ * @extends {Any}
+ */
+function Random(random) {
+  if (typeof random !== 'undefined') {
+    this.random = random;
+  }
+}
+
+Random.prototype = _.extend(Object.create(Any.prototype), {
   Random: true,
 
   random: Math.random,
@@ -75,17 +86,6 @@ var TRandom = {
 
   // TODO: shuffle (requires collections)
   // TODO: alphanumeric (requires stream)
-};
-
-/**
- * @param {function} random You can supply your own random implementation
- * @constructor
- */
-function Random(random) {
-  if (typeof random !== 'undefined') {
-    this.random = random;
-  }
-}
-Random.prototype = _.extend(Object.create(Any.prototype), TRandom);
+});
 
 export {Random};

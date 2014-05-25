@@ -1,6 +1,9 @@
 import {__isFunction} from './helpers/helpers';
 
-var TAny = {
+function Any() {
+}
+
+Any.prototype = {
   Any: true,
 
   isInstanceOf: function (Class) {
@@ -15,9 +18,5 @@ var TAny = {
     // TODO
   }
 };
-
-function Any() {
-}
-Any.prototype = TAny;
 
 export {Any};
