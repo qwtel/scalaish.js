@@ -5,8 +5,42 @@ import {NoSuchElementException} from './Exceptions';
 import {Left, Right} from './util/Either';
 
 /**
- * @param {B} x
- * @return {OptionImpl.<B>}
+ * Represents optional values. Instances of `Option`
+ * are either an instance of $some or the object $none.
+ *
+ * The most idiomatic way to use an $option instance is to treat it
+ * as a collection or monad and use `map`,`flatMap`, `filter`, or
+ * `foreach`:
+ *
+ * @example
+ * var name = request.getParameter("name")
+ * var upper = name.map(function(n) {
+ *   return n.trim();
+ * }).filter(function(n) {
+ *   return n.length !== 0;
+ * }).map(function(n) {
+ *   return n.toUpperCase();
+ * })
+ * console.log(upper.getOrElse("")
+ *
+ * This allows for sophisticated chaining of $option values without
+ * having to check for the existence of a value.
+ *
+ * A less-idiomatic way to use $option values is via pattern matching:
+ *
+ * @example
+ * var nameMaybe = request.getParameter("name")
+ * nameMaybe.match()
+ *   .case(Some, function(name) {
+ *     console.log(name.trim().toUppercase())
+ *   })
+ *   .case(None, function() {
+ *     console.log("No name value")
+ *   })
+ *
+ * @template A
+ * @param {A} x
+ * @return {OptionImpl.<A>}
  * @constructor
  */
 function OptionImpl(x) {
@@ -24,39 +58,43 @@ OptionImpl.prototype = _.extend(Object.create(Any.prototype), {
 
   /**
    * Returns true if the option is $none, false otherwise.
-   * @return {boolean}
    */
-  isEmpty: null,
+  isEmpty: undefined,
 
   /**
    * Returns true if the option is an instance of $some, false otherwise.
    * @return {boolean}
    */
   isDefined: function () {
-    return !this.isEmpty
+    return !this.isEmpty;
   },
 
   /**
    * Returns the option's value.
-   * @note The option must be nonEmpty.
-   * @throws {NoSuchElementException} if the option is empty.
+   * Note: The option must be nonEmpty.
+   * @template A
+   * @throws {NoSuchElementException} - if the option is empty.
    * @return {A}
    */
   // TODO: Rename to avoid JS Object conflict?
-  get: null,
+  get: function () {
+    throw new Error("TODO: NotImplementedError");
+  },
 
   /**
    * Returns the option's value if the option is nonempty, otherwise
    * return the result of evaluating `def`.
    *
-   * @param def {A|function(): A} the default expression.
+   * @template A
+   * @param {A|function(): A} def - the default expression.
+   * @param {Object=} context
    * @return {A}
    */
   getOrElse: function (def, context) {
     if (this.isEmpty) {
       return __result(def, context);
     } else {
-      return this.get()
+      return this.get();
     }
   },
 
@@ -65,10 +103,11 @@ OptionImpl.prototype = _.extend(Object.create(Any.prototype), {
    * or `null` if it is empty.
    * Although the use of null is discouraged, code written to use
    * $option must often interface with code that expects and returns nulls.
+   * @template A
    * @return {A|null}
    */
   orNull: function () {
-    return this.getOrElse(null)
+    return this.getOrElse(null);
   },
 
   /**
@@ -76,20 +115,22 @@ OptionImpl.prototype = _.extend(Object.create(Any.prototype), {
    * value if this $option is nonempty.
    * Otherwise return $none.
    *
-   * @note This is similar to `flatMap` except here,
+   * Note: This is similar to `flatMap` except here,
    * $f does not need to wrap its result in an $option.
    *
-   * @template B
+   * @template A, B
    * @param  f {function(A): B} the function to apply
+   * @param {Object=} context
    * @return OptionImpl.<B>
+   *
    * @see flatMap
    * @see forEach
    */
   map: function (f, context) {
     if (this.isEmpty) {
-      return None()
+      return None();
     } else {
-      return Some(f.call(context, this.get()))
+      return Some(f.call(context, this.get()));
     }
   },
 
@@ -98,25 +139,28 @@ OptionImpl.prototype = _.extend(Object.create(Any.prototype), {
    * value if the $option is nonempty.  Otherwise, evaluates
    * expression `ifEmpty`.
    *
-   * @note This is equivalent to `$option map f getOrElse ifEmpty`.
+   * Note: This is equivalent to `$option map f getOrElse ifEmpty`.
    *
-   * @template B
-   * @param ifEmpty {B|function(): B} the expression to evaluate if empty.
-   * @return {function(B|function(): B): B}
+   * @template A, B
+   * @param ifEmpty {B|function(): B} - the expression to evaluate if empty.
+   * @param {Object=} contextIfEmpty
+   * @return {function((B|function(A): B), [Object]): B}
    */
-  fold: function (ifEmpty) {
+  fold: function (ifEmpty, contextIfEmpty) {
     // TODO: Better way to document this / better way for partial application?
     /**
-     *  @return {B}
-     *  @param f {function(A): B} the function to apply if nonempty.
+     * @template A, B
+     * @param f {B|function(A): B} - the function to apply if nonempty.
+     * @param {Object=} context
+     * @return {B}
      */
     return function (f, context) {
       if (this.isEmpty) {
-        return __result(ifEmpty)
+        return __result(ifEmpty, contextIfEmpty);
       } else {
-        return f.call(context, this.get())
+        return f.call(context, this.get());
       }
-    }.bind(this)
+    }.bind(this);
   },
 
   /**
@@ -126,25 +170,27 @@ OptionImpl.prototype = _.extend(Object.create(Any.prototype), {
    * Slightly different from `map` in that $f is expected to
    * return an $option (which could be $none).
    *
-   * @template B
-   * @param  f {function(A): OptionImpl.<B>} the function to apply
+   * @template A, B
+   * @param {function(A): OptionImpl.<B>} f - the function to apply
+   * @param {Object=} context -
    * @return {OptionImpl.<B>}
+   *
    * @see map
    * @see forEach
    */
   flatMap: function (f, context) {
     if (this.isEmpty) {
-      return None()
+      return None();
     } else {
-      return f.call(context, this.get())
+      return f.call(context, this.get());
     }
   },
 
   flatten: function () {
     if (this.isEmpty) {
-      return None()
+      return None();
     } else {
-      return this.get()
+      return this.get();
     }
   },
 
@@ -152,14 +198,16 @@ OptionImpl.prototype = _.extend(Object.create(Any.prototype), {
    * Returns this $option if it is nonempty '''and''' applying the predicate $p to
    * this $option's value returns true. Otherwise, return $none.
    *
-   * @param  p {function(A): boolean} the predicate used for testing.
+   * @template A
+   * @param {function(A): boolean} p - the predicate used for testing.
+   * @param {Object=} context
    * @return {OptionImpl.<A>}
    */
   filter: function (p, context) {
     if (this.isEmpty || p.call(context, this.get())) {
       return this;
     } else {
-      return None()
+      return None();
     }
   },
 
@@ -167,19 +215,21 @@ OptionImpl.prototype = _.extend(Object.create(Any.prototype), {
    * Returns this $option if it is nonempty '''and''' applying the predicate $p to
    * this $option's value returns false. Otherwise, return $none.
    *
-   * @param  p {function(A): boolean} the predicate used for testing.
+   * @template A
+   * @param {function(A): boolean} p - the predicate used for testing.
+   * @param {Object=} context
    * @return {OptionImpl.<A>}
    */
   filterNot: function (p, context) {
     if (this.isEmpty || !p.call(context, this.get())) {
       return this;
     } else {
-      return None()
+      return None();
     }
   },
 
   nonEmpty: function () {
-    return this.isDefined()
+    return this.isDefined();
   },
 
   // TODO: This is the exact same code as in Try
@@ -187,6 +237,12 @@ OptionImpl.prototype = _.extend(Object.create(Any.prototype), {
     var self = this;
 
     // TODO: Use pseudo case class?
+    /**
+     * @template A
+     * @param {function(A): boolean} p
+     * @param {Object=} context
+     * @constructor
+     */
     function WithFilter(p, context) {
       this.p = p;
       this.context = context;
@@ -194,34 +250,35 @@ OptionImpl.prototype = _.extend(Object.create(Any.prototype), {
 
     WithFilter.prototype = {
       map: function (f, context) {
-        return self.filter(this.p, this.context).map(f, context)
+        return self.filter(this.p, this.context).map(f, context);
       },
       flatMap: function (f, context) {
-        return self.filter(this.p, this.context).flatMap(f, context)
+        return self.filter(this.p, this.context).flatMap(f, context);
       },
       foreach: function (f, context) {
-        return self.filter(this.p, this.context).foreach(f, context)
+        return self.filter(this.p, this.context).foreach(f, context);
       },
       withFilter: function (q, context) {
         return new WithFilter(function (x) {
-          return self.p.call(self.context, x) && q.call(context, x)
-        }, context)
+          return self.p.call(self.context, x) && q.call(context, x);
+        }, context);
       }
     };
 
-    return new WithFilter(p, context)
+    return new WithFilter(p, context);
   },
 
   /**
    * Tests whether the option contains a given value as an element.
    *
-   * @param elem {A} the element to test.
-   * @return {boolean} `true` if the option has an element that is equal (as
+   * @template A
+   * @param {A} elem - the element to test.
+   * @return {boolean} - `true` if the option has an element that is equal (as
    * determined by `===`) to `elem`, `false` otherwise.
    */
   contains: function (elem) {
     // TODO: equals?
-    return !this.isEmpty && this.get() === elem
+    return !this.isEmpty && this.get() === elem;
   },
 
   /**
@@ -229,36 +286,44 @@ OptionImpl.prototype = _.extend(Object.create(Any.prototype), {
    * $p returns true when applied to this $option's value.
    * Otherwise, returns false.
    *
-   * @param  p {function(A): boolean}  the predicate to test
+   * @template A
+   * @param {function(A): boolean} p - the predicate to test
+   * @param {Object=} context
    * @return {boolean}
    */
   exists: function (p, context) {
-    return !this.isEmpty && p.call(context, this.get())
+    return !this.isEmpty && p.call(context, this.get());
   },
 
   /**
    * Returns true if this option is empty '''or''' the predicate
    * $p returns true when applied to this $option's value.
    *
-   * @param  p {function(A): boolean}  the predicate to test
+   * @template A
+   * @param {function(A): boolean} p - the predicate to test
+   * @param {Object=} context
    * @return {boolean}
    */
   forAll: function (p, context) {
-    return this.isEmpty || p.call(context, this.get())
+    return this.isEmpty || p.call(context, this.get());
   },
 
   /**
    * Apply the given procedure $f to the option's value,
    * if it is nonempty. Otherwise, do nothing.
    *
-   * @template U
-   * @param  f {function(A): U} the procedure to apply.
-   * @return {U|undefined}
+   * @template A
+   * @param {function(A)} f - the procedure to apply.
+   * @param {Object=} context
+   * @return {undefined}
+   *
    * @see map
    * @see flatMap
    */
   forEach: function (f, context) {
-    if (!this.isEmpty) return f.call(context, this.get())
+    if (!this.isEmpty) {
+      return f.call(context, this.get());
+    }
   },
 
   // TODO: collect
@@ -267,14 +332,15 @@ OptionImpl.prototype = _.extend(Object.create(Any.prototype), {
    * Returns this $option if it is nonempty,
    * otherwise return the result of evaluating `alternative`.
    *
+   * @template A
    * @param alternative {OptionImpl.<A>|function(): OptionImpl.<A>} the alternative expression.
    * @return {OptionImpl.<A>}
    */
   orElse: function (alternative) {
     if (this.isEmpty) {
-      return __result(alternative)
+      return __result(alternative);
     } else {
-      return this
+      return this;
     }
   },
 
@@ -290,11 +356,12 @@ OptionImpl.prototype = _.extend(Object.create(Any.prototype), {
    *
    * @template X
    * @param {X|function(): X} left - the expression to evaluate and return if this is empty
+   * @param {Object=} context
    * @return {EitherImpl}
    * @see toLeft
    */
   toRight: function(left, context) {
-    return this.isEmpty ? Left(__result(left, context)) : Right(this.get())
+    return this.isEmpty ? Left(__result(left, context)) : Right(this.get());
   },
 
   /**
@@ -305,18 +372,20 @@ OptionImpl.prototype = _.extend(Object.create(Any.prototype), {
    *
    * @template X
    * @param {X|function(): X} right - the expression to evaluate and return if this is empty
+   * @param {Object=} context
    * @return {EitherImpl}
    * @see toRight
    */
   toLeft: function(right, context) {
-    return this.isEmpty ? Right(__result(right, context)) : Left(this.get())
+    return this.isEmpty ? Right(__result(right, context)) : Left(this.get());
   }
 });
 
 /**
- * @param {B} x
+ * @template A
+ * @param {A} x
  * @constructor
- * @extends {OptionImpl.<B>}
+ * @extends {OptionImpl.<A>}
  */
 function SomeImpl(x) {
   this.value = __result(x);
@@ -327,23 +396,27 @@ SomeImpl.prototype = _.extend(Object.create(OptionImpl.prototype), {
   companion: Some,
 
   /**
-   * @override
-   * @inheritDoc
+   * Returns the option's value.
+   * Note: The option must be nonEmpty.
+   * @template A
+   * @throws {NoSuchElementException} - if the option is empty.
+   * @return {A}
    */
   get: function () {
     return this.value;
   },
 
   /**
-   * @override
-   * @inheritDoc
+   * Returns true if the option is $none, false otherwise.
+   * @type {boolean}
    */
   isEmpty: false
 });
 
 /**
+ * @template A
  * @constructor
- * @extends {OptionImpl.<B>}
+ * @extends {OptionImpl.<A>}
  */
 function NoneImpl() {
 }
@@ -353,50 +426,94 @@ NoneImpl.prototype = _.extend(Object.create(OptionImpl.prototype), {
   companion: None,
 
   /**
-   * @override
-   * @inheritDoc
+   * Returns the option's value.
+   * Note: The option must be nonEmpty.
+   * @template A
+   * @throws {NoSuchElementException} - if the option is empty.
+   * @return {A}
    */
   get: function () {
     throw new NoSuchElementException("None.get");
   },
 
   /**
-   * @override
-   * @inheritDoc
+   * Returns true if the option is $none, false otherwise.
+   * @type {boolean}
    */
   isEmpty: true
 });
 
+/**
+ * An Option factory which creates Some(x) if the argument is not null,
+ * and None if it is null.
+ *
+ * @template A
+ * @param {A} x - the value
+ * @return {OptionImpl.<A>} - Some(value) if value != null, None if value == null
+ */
 function Option(x) {
-  return Option.apply(x);
+  return new OptionImpl(x);
 }
-Option.apply = function (x) {
-  return new OptionImpl(x)
-};
+
+/**
+ * @template A
+ * @param {OptionImpl.<A>} opt
+ * @return {A|null}
+ */
+//TODO: pseudo case classes
 Option.unapply = function (opt) {
   if (opt.isEmpty) {
     return None.unapply(opt);
   } else {
-    return Some.unapply(opt)
+    return Some.unapply(opt);
   }
 };
 
-function Some(x) {
-  return Some.apply(x);
-}
-Some.apply = function (x) {
-  return new SomeImpl(x)
+/**
+ * An Option factory which returns `None` in a manner consistent with
+ * the collections hierarchy.
+ *
+ * @return {NoneImpl}
+ */
+Option.empty = function () {
+  return None();
 };
+
+/**
+ * Class `Some[A]` represents existing values of type
+ * `A`.
+ *
+ * @template A
+ * @param {A} x
+ * @return {SomeImpl.<A>}
+ */
+function Some(x) {
+  return new SomeImpl(x);
+}
+
+/**
+ * @template A
+ * @param {SomeImpl.<A>} opt
+ * @return {A}
+ */
+//TODO: pseudo case classes
 Some.unapply = function (opt) {
   return opt.get();
 };
 
+/**
+ * This case object represents non-existent values.
+ * @return {NoneImpl}
+ */
 function None() {
-  return None.apply()
-}
-None.apply = function (x) {
   return None.instance;
-};
+}
+
+/**
+ * @param {NoneImpl} opt
+ * @return {null}
+ */
+//TODO: pseudo case classes
 None.unapply = function (opt) {
   return null;
 };
