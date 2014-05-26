@@ -334,11 +334,12 @@ OptionImpl.prototype = _.extend(Object.create(Any.prototype), {
    *
    * @template A
    * @param alternative {OptionImpl.<A>|function(): OptionImpl.<A>} the alternative expression.
+   * @param {Object=} context
    * @return {OptionImpl.<A>}
    */
-  orElse: function (alternative) {
+  orElse: function (alternative, context) {
     if (this.isEmpty) {
-      return __result(alternative);
+      return __result(alternative, context);
     } else {
       return this;
     }
@@ -388,7 +389,7 @@ OptionImpl.prototype = _.extend(Object.create(Any.prototype), {
  * @extends {OptionImpl.<A>}
  */
 function SomeImpl(x) {
-  this.value = __result(x);
+  this.value = x;
 }
 
 SomeImpl.prototype = _.extend(Object.create(OptionImpl.prototype), {
