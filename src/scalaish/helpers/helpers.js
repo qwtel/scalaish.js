@@ -1,3 +1,5 @@
+import {_} from 'underscore';
+
 // http://coffeescript.org/
 var __extends = function (parent, child) {
   child.__super__ = parent.prototype;
@@ -13,11 +15,17 @@ var __extends = function (parent, child) {
 };
 
 // http://stackoverflow.com/a/1880726/870615
-var __isConstructor = function (Clazz) {
+// super bad performance, don't use this
+var __isConstructor = function (_this, Class) {
   var isConstructor = false;
-  if (this instanceof Clazz && !this['__previouslyConstructedBy' + Clazz.name]) {
+  var key = '__previouslyConstructedBy' + Class.name + '__';
+  if (_this instanceof Class && !_this[key]) {
     isConstructor = true;
-    this['__previouslyConstructedBy' + Clazz.name] = true;
+    Object.defineProperty(_this, key, {
+      value: true,
+      writeable: false,
+      enumerable: false
+    })
   }
   return isConstructor;
 };
@@ -28,8 +36,8 @@ var __isFunction = function (obj) {
 };
 
 // http://underscorejs.org/
-var __result = function (value) {
-  return __isFunction(value) ? value.call() : value;
+var __result = function (value, context) {
+  return __isFunction(value) ? value.call(context) : value;
 };
 
 // http://stackoverflow.com/a/728694/870615
@@ -54,4 +62,17 @@ var __clone = function (obj) {
   return copy;
 };
 
-export {__extends, __isConstructor, __isFunction, __result, __clone};
+var println = console.log;
+
+function time(f, context) {
+  var start = new Date().getTime();
+  f.call(context);
+  var now = new Date().getTime();
+  return now - start
+}
+
+function printTime(f, context) {
+  println(time(f, context))
+}
+
+export {__extends, __isConstructor, __isFunction, __result, __clone, println, time, printTime};

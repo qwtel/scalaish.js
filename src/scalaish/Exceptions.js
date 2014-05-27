@@ -1,39 +1,50 @@
-import {Trait} from './helpers/Trait';
+function Throwable(message, fileName, lineNumber) {
+  Error.call(this, arguments);
+  Error.captureStackTrace(this, Throwable);
 
-var TThrowable = Trait("Throwable", {
-  message: Trait.required
-});
-
-var TException = Trait.compose(TThrowable, Trait("Exception", {}));
-var TRuntimeException = Trait.compose(TException, Trait("RuntimeException", {}));
-
-var TNoSuchElementException = Trait.compose(TRuntimeException, Trait("NoSuchElementException", {}));
-var TUnsupportedOperationException = Trait.compose(TRuntimeException, Trait("UnsupportedOperationException", {}));
-var TIndexOutOfBoundsException = Trait.compose(TRuntimeException, Trait("IndexOutOfBoundsException", {}));
-
-function Throwable(msg) {
-  return Object.create(Throwable.prototype, Trait.compose(TThrowable, Trait({message: msg})))
+  if (message) this.message = message;
+  if (fileName) this.fileName = fileName;
+  if (lineNumber) this.lineNumber = lineNumber;
 }
+Throwable.prototype = Object.create(Error.prototype);
+Throwable.prototype.name = Throwable.name;
 
-function Exception(msg) {
-  return Object.create(Exception.prototype, Trait.compose(TException, Trait({message: msg})))
+function Exception() {
+  Throwable.apply(this, arguments);
+  Error.captureStackTrace(this, Exception);
 }
+Exception.prototype = Object.create(Throwable.prototype);
+Exception.prototype.name = Exception.name;
 
-function RuntimeException(msg) {
-  return Object.create(RuntimeException.prototype, Trait.compose(TRuntimeException, Trait({message: msg})))
+function RuntimeException() {
+  Exception.apply(this, arguments);
+  Error.captureStackTrace(this, RuntimeException);
 }
+RuntimeException.prototype = Object.create(Exception.prototype);
+RuntimeException.prototype.name = RuntimeException.name;
 
-function NoSuchElementException(msg) {
-  return Object.create(NoSuchElementException.prototype, Trait.compose(TNoSuchElementException, Trait({message: msg})))
+function NoSuchElementException() {
+  RuntimeException.apply(this, arguments);
+  Error.captureStackTrace(this, NoSuchElementException);
 }
+NoSuchElementException.prototype = Object.create(RuntimeException.prototype);
+NoSuchElementException.prototype.name = NoSuchElementException.name;
 
-function UnsupportedOperationException(msg) {
-  return Object.create(UnsupportedOperationException.prototype, Trait.compose(TUnsupportedOperationException, Trait({message: msg})))
+function UnsupportedOperationException() {
+  RuntimeException.apply(this, arguments);
+  Error.captureStackTrace(this, UnsupportedOperationException);
 }
+UnsupportedOperationException.prototype = Object.create(RuntimeException.prototype);
+UnsupportedOperationException.prototype.name = UnsupportedOperationException.name;
 
-function IndexOutOfBoundsException(msg) {
-  return Object.create(IndexOutOfBoundsException.prototype, Trait.compose(TIndexOutOfBoundsException, Trait({message: msg})))
+function IndexOutOfBoundsException() {
+  RuntimeException.apply(this, arguments);
+  Error.captureStackTrace(this, IndexOutOfBoundsException);
 }
+IndexOutOfBoundsException.prototype = Object.create(RuntimeException.prototype);
+IndexOutOfBoundsException.prototype.name = IndexOutOfBoundsException.name;
+
+// TODO
 
 export {
   Throwable,

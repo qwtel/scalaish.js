@@ -1,4 +1,5 @@
-import {Trait} from "../helpers/Trait";
+import {_} from 'underscore';
+import {Any} from '../Any';
 
 /**
  * http://stackoverflow.com/a/1527820/870615
@@ -11,9 +12,21 @@ function range(min, max) {
   return Math.floor(this.random() * (max - min) + min);
 }
 
-var TRandom = Trait("Random", {
+/**
+ * @param {function} random You can supply your own random implementation
+ * @constructor
+ * @extends {Any}
+ */
+function Random(random) {
+  if (typeof random !== 'undefined') {
+    this.random = random;
+  }
+}
 
-  random: Trait.required,
+Random.prototype = _.extend(Object.create(Any.prototype), {
+  Random: true,
+
+  random: Math.random,
 
   /**
    * // http://jsfiddle.net/Ronny/Ud5vT/
@@ -74,16 +87,5 @@ var TRandom = Trait("Random", {
   // TODO: shuffle (requires collections)
   // TODO: alphanumeric (requires stream)
 });
-
-/**
- * @param {function} random You can supply your own random implementation
- * @constructor
- */
-function Random(random) {
-  if (typeof random === 'undefined') {
-    random = Math.random;
-  }
-  return Object.create(Random.prototype, Trait.compose(TRandom, Trait({random: random})))
-}
 
 export {Random};
