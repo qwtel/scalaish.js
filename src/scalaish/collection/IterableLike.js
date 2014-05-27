@@ -2,7 +2,11 @@ import {Trait} from 'traits';
 
 import {TTraversableLike} from './TraversableLike';
 
+/**
+ * @template A, Repr
+ */
 var TIterableLike_ = Trait("IterableLike", {
+
   iterator: Trait.required,
 
   forEach: function (f) {
@@ -26,9 +30,9 @@ var TIterableLike_ = Trait("IterableLike", {
   },
 
   foldRight: function (z) {
-    return function(op) {
+    return function (op) {
       return this.iterator.foldRight(z)(op);
-    }.bind(this)
+    }.bind(this);
   },
 
   reduceRight: function (op) {
@@ -39,11 +43,103 @@ var TIterableLike_ = Trait("IterableLike", {
     return this;
   },
 
-  head: function() {
+  head: function () {
     return this.iterator.next();
   },
 
-  // TODO
+  /**
+   * @param {Number} frm
+   * @param {Number} until
+   * @override
+   */
+  slice: function (frm, until) {
+
+  },
+
+  /**
+   * @param {Number} n
+   * @override
+   */
+  take: function (n) {
+
+  },
+
+  /**
+   * @param {Number} n
+   * @override
+   */
+  drop: function (n) {
+
+  },
+
+  /**
+   * @template A
+   * @param {function(A): boolean} p
+   * @override
+   * @return {Repr}
+   */
+  takeWhile: function (p) {
+
+  },
+
+  /**
+   * @param {Number} size - the number of elements per group
+   * @return {Iterator.<Repr>} -
+   */
+  grouped: function (size) {
+
+  },
+
+  /**
+   *
+   * @param {Number=} size -
+   * @param {Number=} step -
+   * @return {Iterator.<Repr>} -
+   */
+  sliding: function (size, step) {
+    step = step || 1;
+  },
+
+  takeRight: function (n) {
+
+  },
+
+  dropRight: function (n) {
+
+  },
+
+  /**
+   * @template A, B
+   * B >: A
+   * @param {Array.<B>} xs
+   * @param {Number} start
+   * @param {Number} len
+   */
+  copyToArray: function (xs, start, len) {
+
+  },
+
+  zip: function (that) {
+
+  },
+
+  zipAll: function () {
+
+  },
+
+  zipWithIndex: function () {
+
+  },
+
+  sameElements: function () {
+
+  }
+
+  // TODO: toStream
+
+  // TODO: canEqual
+
+  // TODO: view
 });
 
 var TIterableLike = Trait.override(TIterableLike_, TTraversableLike);

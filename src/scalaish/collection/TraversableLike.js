@@ -1,6 +1,8 @@
 import {Trait} from '../helpers/Trait';
-import {Option, Some, None} from '../Option';
+import {Some, None} from '../Option';
 import {TTraversableOnce} from './TraversableOnce';
+import {NoSuchElementException, UnsupportedOperationException} from '../Exceptions';
+import {T} from '../Tuple';
 
 var TTraversableLike_ = Trait("TraversableLike", {
 
@@ -18,7 +20,7 @@ var TTraversableLike_ = Trait("TraversableLike", {
     try {
       this.forEach(function () {
         result = false;
-        throw new Error("break")
+        throw new Error("break");
       });
     } catch (e) {
     }
@@ -40,7 +42,7 @@ var TTraversableLike_ = Trait("TraversableLike", {
     b.sizeHint(this);
 
     this.forEach(function (x) {
-      b.addOne(f(x))
+      b.addOne(f(x));
     });
 
     return b.result();
@@ -50,7 +52,7 @@ var TTraversableLike_ = Trait("TraversableLike", {
     var b = this.bf(this);
 
     this.forEach(function (x) {
-      b.addAll(f(x).seq())
+      b.addAll(f(x).seq());
     });
 
     return b.result();
@@ -61,18 +63,18 @@ var TTraversableLike_ = Trait("TraversableLike", {
     var b = this.newBuilder();
 
     this.forEach(function (x) {
-      if (p(x) !== isFlipped) b.addOne(x)
+      if (p(x) !== isFlipped) b.addOne(x);
     });
 
     return b.result();
   },
 
   filter: function (p) {
-    return this._filterImpl(p, false)
+    return this._filterImpl(p, false);
   },
 
   filterNot: function (p) {
-    return this._filterImpl(p, true)
+    return this._filterImpl(p, true);
   },
 
   // TODO: collect
@@ -85,8 +87,7 @@ var TTraversableLike_ = Trait("TraversableLike", {
       (p(x) ? l : r).addOne(x);
     });
 
-    // TODO: Use Tupel
-    return [l.result(), r.result()];
+    return T(l.result(), r.result());
   },
 
   // TODO: groupBy
@@ -99,7 +100,7 @@ var TTraversableLike_ = Trait("TraversableLike", {
       this.forEach(function (x) {
         if (!p(x)) {
           result = false;
-          throw new Error("break")
+          throw new Error("break");
         }
       });
     } catch (e) {
@@ -118,7 +119,7 @@ var TTraversableLike_ = Trait("TraversableLike", {
       this.forEach(function (x) {
         if (p(x)) {
           result = true;
-          throw new Error("break")
+          throw new Error("break");
         }
       });
     } catch (e) {
@@ -135,7 +136,7 @@ var TTraversableLike_ = Trait("TraversableLike", {
       this.forEach(function (x) {
         if (p(x)) {
           result = Some(x);
-          throw new Error("break")
+          throw new Error("break");
         }
       });
     } catch (e) {
@@ -148,40 +149,36 @@ var TTraversableLike_ = Trait("TraversableLike", {
 
   head: function () {
     var result = function () {
-      // TODO: Exception types
-      throw new Error("NoSuchElementException")
+      throw new NoSuchElementException();
     };
 
-    // TODO: Probably slow
     try {
       this.forEach(function (x) {
-        if (p(x)) {
-          result = function () {
-            return x
-          };
-          throw new Error("break")
-        }
+        result = function () {
+          return x;
+        };
+        throw new Error("break");
       });
     } catch (e) {
     }
 
-    return result()
+    return result();
   },
 
   headOption: function () {
     if (this.isEmpty()) {
       return None();
     } else {
-      return Some(this.head())
+      return Some(this.head());
     }
   },
 
   tail: function () {
     if (this.isEmpty()) {
       // TODO: Exception types
-      throw new Error("UnsupportedOperationException")
+      throw new UnsupportedOperationException();
     }
-    return this.drop(1)
+    return this.drop(1);
   },
 
   last: function () {
@@ -196,7 +193,7 @@ var TTraversableLike_ = Trait("TraversableLike", {
 
   lastOption: function () {
     if (this.isEmpty()) {
-      return None()
+      return None();
     } else {
       return Some(this.last());
     }
@@ -205,7 +202,7 @@ var TTraversableLike_ = Trait("TraversableLike", {
   init: function () {
     if (this.isEmpty()) {
       // TODO: Exception types
-      throw new Error("UnsupportedOperationException")
+      throw new UnsupportedOperationException();
     }
 
     var lst = this.head();
@@ -313,11 +310,10 @@ var TTraversableLike_ = Trait("TraversableLike", {
 
     this.forEach(function (x) {
       toLeft = toLeft && p(x);
-      (toLeft ? l : r).addOne(x)
+      (toLeft ? l : r).addOne(x);
     });
 
-    // TODO: Use Tupel
-    return [l.result(), r.result()]
+    return T(l.result(), r.result());
   },
 
   splitAt: function (n) {
@@ -333,8 +329,7 @@ var TTraversableLike_ = Trait("TraversableLike", {
       i++;
     });
 
-    // TODO: Use Tupel
-    return [l.result(), r.result()]
+    return T(l.result(), r.result());
   }
 
   // TODO: tails, inits

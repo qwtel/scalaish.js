@@ -12,7 +12,7 @@ var TTraversableOnce = Trait("TraversableOnce", {
   reversed: function () {
     // TODO
     console.warn('reversed not implemented');
-    return this
+    return this;
   },
 
   // TODO: copyToArray
@@ -51,7 +51,7 @@ var TTraversableOnce = Trait("TraversableOnce", {
     return function (z) {
       return this.reversed().foldLeft(z)(function(x, y) {
         return op(x, y);
-      })
+      });
     }.bind(this);
   }
 });

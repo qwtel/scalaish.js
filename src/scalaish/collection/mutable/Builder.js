@@ -12,7 +12,7 @@ var TBuilder_ = Trait("Builder", {
 
   // TODO: Find a way to deal with lack of overloading
   sizeHint: function(size, n) {
-    if (typeof size == 'number') {
+    if (typeof size === 'number') {
 
     }
     // TODO
