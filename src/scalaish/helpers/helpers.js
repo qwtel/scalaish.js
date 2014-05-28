@@ -68,11 +68,27 @@ function time(f, context) {
   var start = new Date().getTime();
   f.call(context);
   var now = new Date().getTime();
-  return now - start
+  return now - start;
 }
 
 function printTime(f, context) {
-  println(time(f, context))
+  println(time(f, context));
 }
 
-export {__extends, __isConstructor, __isFunction, __result, __clone, println, time, printTime};
+function __equals(o1, o2) {
+  if (typeof o1.equals !== 'undefined') {
+    if (typeof o2.equals !== 'undefined') {
+      return o1.equals(o2);
+    } else {
+      return false;
+    }
+  } else {
+    if (typeof o2.equals === 'undefined') {
+      return o1 === o2;
+    } else {
+      return false;
+    }
+  }
+}
+
+export {__extends, __isConstructor, __isFunction, __result, __clone, __equals, println, time, printTime};

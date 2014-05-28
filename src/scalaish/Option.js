@@ -1,8 +1,9 @@
 import {_} from 'underscore';
 import {__result} from "./helpers/helpers";
+import {caseClassify, caseObjectify} from './helpers/caseClassify';
 import {Any} from './Any';
 import {NoSuchElementException} from './Exceptions';
-import {Left, Right} from './util/Either';
+//import {Left, Right} from './util/Either';
 
 /**
  * Represents optional values. Instances of `Option`
@@ -236,7 +237,7 @@ OptionImpl.prototype = _.extend(Object.create(Any.prototype), {
   withFilter: function (p, context) {
     var self = this;
 
-    // TODO: Use pseudo case class?
+    // TODO: Creact class function?
     /**
      * @template A
      * @param {function(A): boolean} p
@@ -361,9 +362,11 @@ OptionImpl.prototype = _.extend(Object.create(Any.prototype), {
    * @return {EitherImpl}
    * @see toLeft
    */
+  /*
   toRight: function(left, context) {
     return this.isEmpty ? Left(__result(left, context)) : Right(this.get());
   },
+  */
 
   /**
    * Returns a [[scala.util.Right]] containing the given
@@ -377,9 +380,11 @@ OptionImpl.prototype = _.extend(Object.create(Any.prototype), {
    * @return {EitherImpl}
    * @see toRight
    */
+  /*
   toLeft: function(right, context) {
     return this.isEmpty ? Right(__result(right, context)) : Left(this.get());
   }
+  */
 });
 
 /**
@@ -389,7 +394,7 @@ OptionImpl.prototype = _.extend(Object.create(Any.prototype), {
  * @extends {OptionImpl.<A>}
  */
 function SomeImpl(x) {
-  this.value = x;
+  this.x = x;
 }
 
 SomeImpl.prototype = _.extend(Object.create(OptionImpl.prototype), {
@@ -404,7 +409,7 @@ SomeImpl.prototype = _.extend(Object.create(OptionImpl.prototype), {
    * @return {A}
    */
   get: function () {
-    return this.value;
+    return this.x;
   },
 
   /**
@@ -452,23 +457,7 @@ NoneImpl.prototype = _.extend(Object.create(OptionImpl.prototype), {
  * @param {A} x - the value
  * @return {OptionImpl.<A>} - Some(value) if value != null, None if value == null
  */
-function Option(x) {
-  return new OptionImpl(x);
-}
-
-/**
- * @template A
- * @param {OptionImpl.<A>} opt
- * @return {A|null}
- */
-//TODO: pseudo case classes
-Option.unapply = function (opt) {
-  if (opt.isEmpty) {
-    return None.unapply(opt);
-  } else {
-    return Some.unapply(opt);
-  }
-};
+var Option = caseClassify("Option", OptionImpl); // TODO: is this even necessary? what should it do?
 
 /**
  * An Option factory which returns `None` in a manner consistent with
@@ -485,41 +474,15 @@ Option.empty = function () {
  * `A`.
  *
  * @template A
- * @param {A} x
  * @return {SomeImpl.<A>}
  */
-function Some(x) {
-  return new SomeImpl(x);
-}
-
-/**
- * @template A
- * @param {SomeImpl.<A>} opt
- * @return {A}
- */
-//TODO: pseudo case classes
-Some.unapply = function (opt) {
-  return opt.get();
-};
+var Some = caseClassify("Some", SomeImpl);
 
 /**
  * This case object represents non-existent values.
  * @return {NoneImpl}
  */
-function None() {
-  return None.instance;
-}
+var None = caseObjectify("None", NoneImpl);
 
-/**
- * @param {NoneImpl} opt
- * @return {null}
- */
-//TODO: pseudo case classes
-None.unapply = function (opt) {
-  return null;
-};
-
-None.instance = new NoneImpl();
-
-export {Option, Some, None};
+export {Option, Some, None, OptionImpl, SomeImpl, NoneImpl};
 

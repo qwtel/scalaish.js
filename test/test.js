@@ -24,10 +24,13 @@ var match = require('../dist/cjs/scalaish/helpers/match').match;
 
 var NUM = 100000;
 
-console.log(Right(1).swap().left().map(function (x) {
+//println(Right(1));
+println(Right(1).swap());
+println(Right(1).swap().left().map(function (x) {
   return x + 1
 }));
 
+/*
 println("Create " + NUM + " JSObject instances:",
   time(function () {
     var x;
@@ -47,12 +50,13 @@ println("Map " + NUM + " Either instances:",
     }
   })
 );
+*/
 
 //import {Random} from '../util/Random';
 //import {T} from '../Product';
 
 
-//console.log(T(1, 2)._1);
+//println(T(1, 2)._1);
 
 /*
  var TFoo = Trait("Foo", {
@@ -72,21 +76,21 @@ println("Map " + NUM + " Either instances:",
  var fooBar = FooBar(3);
  */
 /*
- console.log(fooBar.isInstanceOf("Bar"));
- console.log(fooBar.isInstanceOf("Foo"));
- console.log(fooBar.isInstanceOf("Any"));
- console.log(!fooBar.isInstanceOf("Other"));
- console.log(fooBar.hasOwnProperty("foo"));
- console.log(fooBar.hasOwnProperty("bar"));
- console.log(fooBar.value === 3);
- console.log(fooBar.isInstanceOf("FooBar"));
- console.log(fooBar instanceof FooBar);
+ println(fooBar.isInstanceOf("Bar"));
+ println(fooBar.isInstanceOf("Foo"));
+ println(fooBar.isInstanceOf("Any"));
+ println(!fooBar.isInstanceOf("Other"));
+ println(fooBar.hasOwnProperty("foo"));
+ println(fooBar.hasOwnProperty("bar"));
+ println(fooBar.value === 3);
+ println(fooBar.isInstanceOf("FooBar"));
+ println(fooBar instanceof FooBar);
  */
 
 var o = Option(1);
-//console.log(o instanceof Some);
-//console.log(o instanceof Option);
-//console.log(!(o instanceof None));
+//println(o instanceof Some);
+//println(o instanceof Option);
+//println(!(o instanceof None));
 println(o.get() === 1);
 println(o.withFilter(function (x) {
   return x >= 1
@@ -95,6 +99,7 @@ println(o.withFilter(function (x) {
 }).get() === 2);
 
 
+/*
 println("Map " + NUM + " Option instances:",
   time(function () {
     var x;
@@ -124,6 +129,7 @@ println("Create " + NUM + " Tuple instances:",
     }
   })
 );
+*/
 
 /*
  println(o.isInstanceOf("Some"));

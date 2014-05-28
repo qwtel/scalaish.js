@@ -1,5 +1,5 @@
 import {_} from 'underscore';
-import {__isFunction} from './helpers';
+import {__isFunction, __equals} from './helpers';
 
 // TODO: Use pseudo case classes?
 
@@ -10,7 +10,7 @@ import {__isFunction} from './helpers';
  * @constructor
  */
 function Case(o) {
-  this.o = o
+  this.o = o;
 }
 
 Case.prototype = {
@@ -23,9 +23,9 @@ Case.prototype = {
    * @return {Match|Case}
    */
   case: function (other, f, context) {
-    return (this.o === other /* TODO: equals? */) ?
+    return (__equals(this.o, other)) ?
       new Match(f.call(context, this.o)) :
-      this
+      this;
   },
 
   /**
@@ -46,7 +46,7 @@ Case.prototype = {
    * @return {Match}
    */
   default: function (f, context) {
-    return new Match(f.call(context, this.o))
+    return new Match(f.call(context, this.o));
   }
 };
 
@@ -59,14 +59,14 @@ Case.prototype = {
  * @extends {Case}
  */
 function ScalaishCase(o) {
-  Case.call(this, o)
+  Case.call(this, o);
 }
 
-// TODO: unapply as much as possible?
-var unapply = function (Class, o) {
-  return Class.unapply ?
-    Class.unapply(o) :
-    o
+var unCreate = function (Class, o) {
+// TODO: recursive unCreate
+  return Class.unCreate ?
+    Class.unCreate(o) :
+    [o];
 };
 
 ScalaishCase.prototype = _.extend(Object.create(Case.prototype), {
@@ -79,8 +79,8 @@ ScalaishCase.prototype = _.extend(Object.create(Case.prototype), {
    */
   case: function (Class, f, context) {
     return (this.o.isInstanceOf(Class)) ?
-      new Match(f.call(context, unapply(Class, this.o))) :
-      this
+      new Match(f.apply(context, unCreate(Class, this.o))) :
+      this;
   }
 });
 
@@ -93,7 +93,7 @@ ScalaishCase.prototype = _.extend(Object.create(Case.prototype), {
  * @extends {Case}
  */
 function ConstructorCase(o) {
-  Case.call(this, o)
+  Case.call(this, o);
 }
 
 ConstructorCase.prototype = _.extend(Object.create(Case.prototype), {
@@ -109,7 +109,7 @@ ConstructorCase.prototype = _.extend(Object.create(Case.prototype), {
   case: function (Class, f, context) {
     return (this.o instanceof Class) ?
       new Match(f.call(context, this.o)) :
-      this
+      this;
   }
 });
 
@@ -129,7 +129,7 @@ Match.prototype = {
    * @return {Match}
    */
   case: function () {
-    return this
+    return this;
   },
 
   /**
@@ -144,8 +144,8 @@ Match.prototype = {
   /**
    * @return {Match}
    */
-  default: function (f, context) {
-    return this
+  default: function () {
+    return this;
   }
 };
 
@@ -156,13 +156,12 @@ Match.prototype = {
  * @return {Case}
  */
 function match(o) {
-  if (typeof o['Any'] !== 'undefined') {
-    return new ScalaishCase(o)
+  if (typeof o.Any !== 'undefined') {
+    return new ScalaishCase(o);
   } else if (__isFunction(o)) {
-    return new ConstructorCase(o)
+    return new ConstructorCase(o);
   } else {
-    return new Case(o)
+    return new Case(o);
   }
 }
-
 export {match};

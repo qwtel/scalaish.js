@@ -1,6 +1,7 @@
 import {_} from 'underscore';
 import {Any} from './Any';
 import {IndexOutOfBoundsException} from "./Exceptions";
+import {TEquals} from './Equals';
 
 /**
  * Base trait for all products, which in the standard library include at
@@ -8,7 +9,7 @@ import {IndexOutOfBoundsException} from "./Exceptions";
  * their subclasses [[scala.Tuple1]] through [[scala.Tuple22]].  In addition,
  * all case classes implement `Product` with synthetically generated methods.
  */
-var TProduct = {
+var TProduct = _.extend({}, TEquals, {
   Product: true,
 
   /**
@@ -43,7 +44,7 @@ var TProduct = {
    * @type {string} in the default implementation, the empty string
    */
   productPrefix: ''
-};
+});
 
 var TProduct1 = _.extend({}, TProduct, {
   Product1: true,
