@@ -50,7 +50,13 @@ TryImpl.prototype = _.extend(Object.create(Any.prototype), {
   withFilter: function (p, context) {
     var self = this;
 
-    // TODO: Use pseudo case class?
+    // TODO: Creact class function?
+    /**
+     * @template A
+     * @param {function(A): boolean} p
+     * @param {Object=} context
+     * @constructor
+     */
     function WithFilter(p, context) {
       this.p = p;
       this.context = context;
@@ -64,12 +70,12 @@ TryImpl.prototype = _.extend(Object.create(Any.prototype), {
         return self.filter(this.p, this.context).flatMap(f, context);
       },
       forEach: function (f, context) {
-        return self.filter(this.p, this.context).foreach(f, context);
+        return self.filter(this.p, this.context).forEach(f, context);
       },
       withFilter: function (q, context) {
         return new WithFilter(function (x) {
-          return self.p.call(self.context, x) && q.call(context, x);
-        }, context);
+          return this.p.call(this.context, x) && q.call(context, x);
+        }.bind(this), context);
       }
     };
 

@@ -1,5 +1,5 @@
 import {_} from 'underscore';
-import {__result} from "./helpers/helpers";
+import {__result, __equals} from "./helpers/helpers";
 import {caseClassify, caseObjectify} from './helpers/caseClassify';
 import {Any} from './Any';
 import {NoSuchElementException} from './Exceptions';
@@ -256,12 +256,12 @@ OptionImpl.prototype = _.extend(Object.create(Any.prototype), {
         return self.filter(this.p, this.context).flatMap(f, context);
       },
       forEach: function (f, context) {
-        return self.filter(this.p, this.context).foreach(f, context);
+        return self.filter(this.p, this.context).forEach(f, context);
       },
       withFilter: function (q, context) {
         return new WithFilter(function (x) {
-          return self.p.call(self.context, x) && q.call(context, x);
-        }, context);
+          return this.p.call(this.context, x) && q.call(context, x);
+        }.bind(this), context);
       }
     };
 
@@ -277,8 +277,7 @@ OptionImpl.prototype = _.extend(Object.create(Any.prototype), {
    * determined by `===`) to `elem`, `false` otherwise.
    */
   contains: function (elem) {
-    // TODO: equals?
-    return !this.isEmpty && this.get() === elem;
+    return !this.isEmpty && __equals(this.get(), elem);
   },
 
   /**
@@ -343,7 +342,7 @@ OptionImpl.prototype = _.extend(Object.create(Any.prototype), {
     } else {
       return this;
     }
-  },
+  }
 
   // TODO: iterator
 

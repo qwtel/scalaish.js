@@ -1,25 +1,23 @@
 {
-  "name": "scala-ish.js",
+  "name": "scalaish.js",
   "version": "0.0.1",
-  "description": "Provides a \"scala-ish\" experience for JavaScript",
+  "description": "Provides a \"scalaish\" experience for JavaScript",
   "author": {
     "name": "Florian Klampfer",
     "url": "cell303.tumblr.com"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/cell303/scala-ish.js.git"
+    "url": "https://github.com/cell303/scalaish.js.git"
   },
   "dependencies": {
-    "traits": "^0.4.0",
     "underscore": "^1.6.0"
   },
   "devDependencies": {
     "gulp": "^3.6.2",
     "gulp-es6-module-transpiler": "^0.1.1",
-    "gulp-closure-compiler": "^0.2.1",
-    "gulp-traceur": "^0.5.0",
-    "gulp-requirejs": "^0.1.3"
+    "gulp-coffee": "^1.4.3",
+    "gulp-jasmine": "^0.2.0"
   },
   "engines": {
     "node": ">=0.10.0",

@@ -1,5 +1,5 @@
 import {_} from 'underscore';
-import {T} from '../Tuple';
+//import {T} from '../Tuple';
 import {Any} from '../Any';
 import {Trait} from '../helpers/Trait';
 import {TTraversableOnce} from './TraversableOnce';
@@ -225,7 +225,8 @@ var TIterator = Trait.extend(TTraversableOnce, Trait("Iterator", {
         return self.hasNext() && that.hasNext()
       },
       next: function () {
-        return T(self.next(), that.next());
+        //return T(self.next(), that.next());
+        return [self.next(), that.next()];
       }
     });
   },
@@ -254,7 +255,8 @@ var TIterator = Trait.extend(TTraversableOnce, Trait("Iterator", {
         return self.hasNext();
       },
       next: function () {
-        var ret = T(self.next(), idx);
+        //var ret = T(self.next(), idx);
+        var ret = [self.next(), idx];
         idx++;
         return ret;
       }
@@ -269,10 +271,12 @@ var TIterator = Trait.extend(TTraversableOnce, Trait("Iterator", {
       },
       next: function () {
         if (self.hasNext()) {
-          if (that.hasNext()) return T(self.next(), that.next());
+          //if (that.hasNext()) return T(self.next(), that.next());
+          if (that.hasNext()) return [self.next(), that.next()];
           else return T(self.next(), thatElem);
         } else {
-          if (that.hasNext()) return T(thisElem, that.next());
+          //if (that.hasNext()) return T(thisElem, that.next());
+          if (that.hasNext()) return [thisElem, that.next()];
           else Iterator.empty.next();
         }
       }
