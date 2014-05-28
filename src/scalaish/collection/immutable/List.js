@@ -1,5 +1,6 @@
-import {_} from 'traits';
-import {Trait} from 'traits';
+import {_} from 'underscore';
+import {Trait} from '../../helpers/Trait';
+import {caseClassify, caseObjectify} from '../../helpers/caseClassify';
 
 import {AbstractSeqImpl} from '../Seq';
 import {TLinearSeq} from '../LinearSeq';
@@ -26,8 +27,7 @@ var TSerializable = {
 // PSEUDO TRAITS
 
 // TODO: List is not really a trait..
-var TList_ = Trait.create("List", {
-  companion: List, // this is so wrong
+var TList_ = Trait("List", {
 
   /**
    * @type {Boolean}
@@ -138,7 +138,7 @@ var TList_ = Trait.create("List", {
     var result = Nil();
     var these = this;
     while (!these.isEmpty) {
-      result = these.head.cons(result);
+      result = result.cons(these.head);
       these = these.tail;
     }
     return result;
@@ -163,7 +163,16 @@ var TList = Trait.override(TList_, TLinearSeq, TProduct, TLinearSeqOptimized, TS
 
 // IMPLEMENTATIONS
 
-function ListImpl() {
+function ListImpl(xs) {
+  if (xs.toList) {
+    return xs.toList();
+  } else {
+    var res = Nil();
+    for (var i = arguments.length - 1; i >= 0; i--) {
+      res = res.cons(arguments[i]);
+    }
+    return res;
+  }
 }
 
 ListImpl.prototype = _.extend(Object.create(AbstractSeqImpl.prototype), TList);
@@ -172,9 +181,10 @@ function NilImpl() {
 }
 
 NilImpl.prototype = _.extend(Object.create(ListImpl.prototype), {
-  isEmpty: true,
-  head: null, // TODO: make head and tail functions to throw exceptions here? performance?
-  tail: null, // TODO: make head and tail functions to throw exceptions here? performance?
+  isEmpty: Trait.required,
+  head: Trait.required, // TODO: make head and tail functions to throw exceptions here? performance?
+  tail: Trait.required, // TODO: make head and tail functions to throw exceptions here? performance?
+
   equals: function (that) {
     if (that.isInstanceOf("Seq")) {
       return that.isEmpty;
@@ -183,32 +193,24 @@ NilImpl.prototype = _.extend(Object.create(ListImpl.prototype), {
   }
 });
 
-function ConsImpl(hd, tl) {
-  this.head = hd;
-  this.tail = tl;
+function ConsImpl(head, tail) {
+  this.head = head;
+  this.tail = tail;
 }
 
 ConsImpl.prototype = _.extend(Object.create(ListImpl.prototype), {
-  head: null, // see constructor
-  tail: null, // see constructor
+  head: Trait.required, // see constructor
+  tail: Trait.required, // see constructor
   isEmpty: false
 });
 
 
 // FACTORY METHODS
 
-function List(xs) {
-  // TODO: support JS object and array
-  // TODO: support argument list
-  return xs.toList();
-}
+var List = caseClassify("List", ListImpl);
 
 List.empty = function () {
   return Nil();
-};
-
-List.unapply = function (cons) {
-  return (cons.isEmpty ? Nil.unapply : Cons.unapply)(cons);
 };
 
 // TODO: Can this be here?
@@ -216,24 +218,7 @@ List.newBuilder = function () {
   return new ListBufferImpl();
 };
 
-// TODO: canBuildFrom ???
-
-function Nil() {
-  return Nil.instance;
-}
-
-Nil.instance = new NilImpl();
-
-Nil.unapply = function() {
-  return null;
-};
-
-function Cons(hd, tl) {
-  return new ConsImpl(hd, tl);
-}
-
-Cons.unapply = function (cons) {
-  return cons.head;
-};
+var Cons = caseClassify("Cons", ConsImpl);
+var Nil = caseObjectify("Nil", NilImpl);
 
 export {List, Nil, Cons, ListImpl, NilImpl, ConsImpl};

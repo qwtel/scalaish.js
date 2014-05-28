@@ -1,5 +1,5 @@
 import {_} from 'underscore';
-import {Trait} from 'traits';
+import {Trait} from '../helpers/Trait';
 
 import {TTraversable} from './Traversable';
 import {TIterableLike} from './IterableLike';

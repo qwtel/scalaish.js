@@ -1,4 +1,4 @@
-import {Trait} from 'traits';
+import {Trait} from '../helpers/Trait';
 
 import {TSeq} from './Seq';
 import {TLinearSeqLike} from './LinearSeqLike';
