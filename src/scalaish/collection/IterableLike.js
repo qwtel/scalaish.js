@@ -2,10 +2,7 @@ import {Trait} from '../helpers/Trait';
 
 import {TTraversableLike} from './TraversableLike';
 
-/**
- * @template A, Repr
- */
-var TIterableLike_ = Trait("IterableLike", {
+var TIterableLike = Trait.extend(TTraversableLike, Trait("IterableLike", {
 
   iterator: Trait.required,
 
@@ -140,8 +137,6 @@ var TIterableLike_ = Trait("IterableLike", {
   // TODO: canEqual
 
   // TODO: view
-});
-
-var TIterableLike = Trait.override(TIterableLike_, TTraversableLike);
+}));
 
 export {TIterableLike};

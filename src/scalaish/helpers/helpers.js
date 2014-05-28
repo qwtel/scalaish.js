@@ -62,7 +62,9 @@ var __clone = function (obj) {
   return copy;
 };
 
-var println = console.log;
+var println = function(x) {
+  console.log((x && x.toString) ? x.toString() : x);
+};
 
 function time(f, context) {
   var start = new Date().getTime();

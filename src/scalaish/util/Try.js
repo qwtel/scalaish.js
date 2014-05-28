@@ -63,7 +63,7 @@ TryImpl.prototype = _.extend(Object.create(Any.prototype), {
       flatMap: function (f, context) {
         return self.filter(this.p, this.context).flatMap(f, context);
       },
-      foreach: function (f, context) {
+      forEach: function (f, context) {
         return self.filter(this.p, this.context).foreach(f, context);
       },
       withFilter: function (q, context) {

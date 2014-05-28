@@ -112,28 +112,10 @@ function caseClassify(name, Impl, argumentNames) {
       return name;
     },
 
-    /*
-     Impl.prototype.equals = function (other) {
-     if (typeof other.Product !== 'undefined') {
-     if (this.productArity() === other.productArity()) {
-     // TODO: productIterator !!!
-     return this.productIterator().sameElements(other.productIterator());
-     }
-     }
-
-     return false;
-     };
-     */
-
-    // TODO: Check for same type? Is a case class equal to a tuple with the same contents?
     equals: function (other) {
       if (typeof other.Product !== 'undefined') {
-        if (this.productArity() === other.productArity() && this.productArity() > 0) {
-          var res = true;
-          iterateOverValues(this, argumentNames, function (n, v) {
-            res = res && __equals(v, other[n]);
-          }, this);
-          return res;
+        if (this.productArity() === other.productArity()) {
+          return this.productIterator().sameElements(other.productIterator());
         }
       }
 
@@ -174,7 +156,7 @@ function caseClassify(name, Impl, argumentNames) {
      * Start a pseudo pattern match
      * @return {*}
      */
-    match: function() {
+    match: function () {
       return match(this);
     }
   });

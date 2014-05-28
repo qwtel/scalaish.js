@@ -6,14 +6,12 @@ import {TIterableLike} from './IterableLike';
 
 import {AbstractTraversableImpl} from './Traversable';
 
-var TIterable_ = Trait("Iterable", {
+var TIterable = Trait.extend(TTraversable, TIterableLike, Trait("Iterable", {
   // TODO: do i need this?
   seq: function () {
     return this;
   }
-});
-
-var TIterable = Trait.override(TIterable_, TIterableLike, TTraversable);
+}));
 
 function AbstractIterableImpl() {
 

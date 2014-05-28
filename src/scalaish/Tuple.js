@@ -147,8 +147,6 @@ var Tuple10 = caseClassify("Tuple10", Tuple10Impl);
 
 /**
  * Convenience "factory" function for Tuples
- *
- * @return {Tuple1Impl|Tuple2Impl|Tuple3Impl|Tuple4Impl}
  */
 function T() {
   switch (arguments.length) {

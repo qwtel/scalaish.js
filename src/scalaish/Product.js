@@ -1,7 +1,9 @@
+import {_} from 'underscore';
 import {Any} from './Any';
 import {IndexOutOfBoundsException} from "./Exceptions";
 import {TEquals} from './Equals';
 import {Trait} from './helpers/Trait';
+import {AbstractIteratorImpl} from './collection/Iterator';
 
 /**
  * Base trait for all products, which in the standard library include at
@@ -27,7 +29,6 @@ var TProduct = Trait.extend(TEquals, Trait("Product", {
     }
   },
 
-
   /**
    * The size of this product.
    * @return  {number} for a product `A(x,,1,,, ..., x,,k,,)`, returns `k`
@@ -39,7 +40,19 @@ var TProduct = Trait.extend(TEquals, Trait("Product", {
    * @return     in the default implementation, an `Iterator[Any]`
    */
   productIterator: function () {
-    // TODO
+    var self = this;
+    var c = 0;
+    var cmax = self.productArity();
+    return _.extend(new AbstractIteratorImpl(), {
+      hasNext: function () {
+        return c < cmax;
+      },
+      next: function () {
+        var result = self.productElement(c);
+        c++;
+        return result;
+      }
+    });
   },
 
   /**
