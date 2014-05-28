@@ -163,7 +163,6 @@ SuccessImpl.prototype = _.extend(Object.create(TryImpl.prototype), {
 });
 
 function FailureImpl(exception) {
-  this.exception = exception;
 }
 
 FailureImpl.prototype = _.extend(Object.create(TryImpl.prototype), {
@@ -224,5 +223,15 @@ FailureImpl.prototype = _.extend(Object.create(TryImpl.prototype), {
 var Try = caseClassify("Try", TryImpl);
 var Success = caseClassify("Success", SuccessImpl);
 var Failure = caseClassify("Failure", FailureImpl);
+
+// TODO: HACK: Override default factory method so that __result function gets called
+Try.create = function (value) {
+  return new TryImpl(value);
+};
+
+// TODO: HACK: Override default factory method so that __result function gets called
+Success.create = function(value) {
+  return new SuccessImpl(value);
+};
 
 export {Try, Success, Failure, TryImpl, SuccessImpl, FailureImpl};

@@ -1,7 +1,7 @@
-import {_} from 'underscore';
 import {Any} from './Any';
 import {IndexOutOfBoundsException} from "./Exceptions";
 import {TEquals} from './Equals';
+import {Trait} from './helpers/Trait';
 
 /**
  * Base trait for all products, which in the standard library include at
@@ -9,8 +9,7 @@ import {TEquals} from './Equals';
  * their subclasses [[scala.Tuple1]] through [[scala.Tuple22]].  In addition,
  * all case classes implement `Product` with synthetically generated methods.
  */
-var TProduct = _.extend({}, TEquals, {
-  Product: true,
+var TProduct = Trait.extend(TEquals, Trait("Product", {
 
   /**
    * The n^th^ element of this product, 0-based.  In other words, for a
@@ -20,13 +19,20 @@ var TProduct = _.extend({}, TEquals, {
    * @throws       `IndexOutOfBoundsException`
    * @return  {*} the element `n` elements after the first element
    */
-  productElement: null,
+  productElement: function (n) {
+    if (n < this.productArity()) {
+      return this['_' + (n + 1)];
+    } else {
+      throw new IndexOutOfBoundsException(n);
+    }
+  },
+
 
   /**
    * The size of this product.
    * @return  {number} for a product `A(x,,1,,, ..., x,,k,,)`, returns `k`
    */
-  productArity: null,
+  productArity: Trait.required,
 
   /**
    * An iterator over all the elements of this product.
@@ -44,94 +50,79 @@ var TProduct = _.extend({}, TEquals, {
    * @type {string} in the default implementation, the empty string
    */
   productPrefix: ''
-});
 
-var TProduct1 = _.extend({}, TProduct, {
-  Product1: true,
+}));
 
+var TProduct1 = Trait.extend(TProduct, Trait("Product1", {
   productArity: 1,
 
-  productElement: function (n) {
-    switch (n) {
-      case 0:
-        return this._1;
-      default:
-        throw new IndexOutOfBoundsException(n);
-    }
-  },
+  _1: Trait.required
+}));
 
-  _1: null
-});
-
-var TProduct2 = _.extend({}, TProduct, {
+var TProduct2 = Trait.extend(TProduct, Trait("Product2", {
   Product2: true,
 
   productArity: 2,
 
-  productElement: function (n) {
-    switch (n) {
-      case 0:
-        return this._1;
-      case 1:
-        return this._2;
-      default:
-        throw new IndexOutOfBoundsException(n);
-    }
-  },
+  _1: Trait.required,
+  _2: Trait.required
+}));
 
-  _1: null,
-  _2: null
-});
+function createProduct(n) {
+  var obj = {
+    productArity: n
+  };
 
-var TProduct3 = _.extend({}, TProduct, {
-  Product3: true,
+  for (var i = 1; i <= n; i++) {
+    obj['_' + i] = Trait.required;
+  }
 
-  productArity: 3,
+  return Trait.extend(TProduct, Trait("Product" + n, obj));
+}
 
-  productElement: function (n) {
-    switch (n) {
-      case 0:
-        return this._1;
-      case 1:
-        return this._2;
-      case 2:
-        return this._3;
-      default:
-        throw new IndexOutOfBoundsException(n);
-    }
-  },
+var TProduct3 = createProduct(3);
+var TProduct4 = createProduct(4);
+var TProduct5 = createProduct(5);
+var TProduct6 = createProduct(6);
+var TProduct7 = createProduct(7);
+var TProduct8 = createProduct(8);
+var TProduct9 = createProduct(9);
+var TProduct10 = createProduct(10);
+var TProduct11 = createProduct(11);
+var TProduct12 = createProduct(12);
+var TProduct13 = createProduct(13);
+var TProduct14 = createProduct(14);
+var TProduct15 = createProduct(15);
+var TProduct16 = createProduct(16);
+var TProduct17 = createProduct(17);
+var TProduct18 = createProduct(18);
+var TProduct19 = createProduct(19);
+var TProduct20 = createProduct(20);
+var TProduct21 = createProduct(21);
+var TProduct22 = createProduct(22);
 
-  _1: null,
-  _2: null,
-  _3: null
-});
-
-var TProduct4 = _.extend({}, TProduct, {
-  Product4: true,
-
-  productArity: 4,
-
-  productElement: function (n) {
-    switch (n) {
-      case 0:
-        return this._1;
-      case 1:
-        return this._2;
-      case 2:
-        return this._3;
-      case 3:
-        return this._4;
-      default:
-        throw new IndexOutOfBoundsException(n);
-    }
-  },
-
-  _1: null,
-  _2: null,
-  _3: null,
-  _4: null
-});
-
-// TODO: More products
-
-export {TProduct, TProduct1, TProduct2, TProduct3, TProduct4};
+export {
+  TProduct,
+  TProduct1,
+  TProduct2,
+  TProduct3,
+  TProduct4,
+  TProduct5,
+  TProduct6,
+  TProduct7,
+  TProduct8,
+  TProduct9,
+  TProduct10,
+  TProduct11,
+  TProduct12,
+  TProduct13,
+  TProduct14,
+  TProduct15,
+  TProduct16,
+  TProduct17,
+  TProduct18,
+  TProduct19,
+  TProduct20,
+  TProduct21,
+  TProduct22
+  };

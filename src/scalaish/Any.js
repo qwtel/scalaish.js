@@ -8,8 +8,8 @@ Any.prototype = {
   Any: true,
 
   isInstanceOf: function (Class) {
-    if (__isFunction(Class)) {
-      return this[Class.name] === true
+    if (Class._name) {
+      return this[Class._name] === true
     } else {
       return this[Class] === true
     }
