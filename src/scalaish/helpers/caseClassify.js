@@ -30,9 +30,10 @@ function getArgumentNames(fn) {
 
 // TODO: should this be replaced by a iterator sometime?
 function iterateOverValues(caseClass, argumentNames, f, context) {
-  Array.prototype.forEach.call(argumentNames, function (name, i) {
+  for (var i = 0; i < argumentNames.length; i++) {
+    var name = argumentNames[i];
     f.call(context, name, caseClass[name], i);
-  });
+  }
 }
 
 /**
@@ -59,16 +60,9 @@ function caseClassify(name, Impl, argumentNames) {
     return cc;
   };
 
+  // TODO: better way to do this? Is this inefficient?
   Factory.create = function (a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z) {
-    // TODO: better way to do this? Is this inefficient?
-    var obj = new Impl(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z);
-
-    var _arguments = arguments;
-    iterateOverValues(obj, argumentNames, function (n, v, i) {
-      obj[n] = _arguments[i];
-    });
-
-    return obj;
+    return new Impl(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z);
   };
 
   Factory.unCreate = function (caseClass) {

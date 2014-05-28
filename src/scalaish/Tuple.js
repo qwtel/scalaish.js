@@ -30,50 +30,105 @@ import {caseClassify} from './helpers/caseClassify';
 
 
 function Tuple1Impl(_1) {
+  this._1 = _1;
 }
 Tuple1Impl.prototype = _.extend(Object.create(Any.prototype), TProduct1);
 
 
 function Tuple2Impl(_1, _2) {
+  this._1 = _1;
+  this._2 = _2;
 }
 Tuple2Impl.prototype = _.extend(Object.create(Any.prototype), TProduct2);
 
 
 function Tuple3Impl(_1, _2, _3) {
+  this._1 = _1;
+  this._2 = _2;
+  this._3 = _3;
 }
 Tuple3Impl.prototype = _.extend(Object.create(Any.prototype), TProduct3);
 
 
 function Tuple4Impl(_1, _2, _3, _4) {
+  this._1 = _1;
+  this._2 = _2;
+  this._3 = _3;
+  this._4 = _4;
 }
 Tuple4Impl.prototype = _.extend(Object.create(Any.prototype), TProduct4);
 
 
 function Tuple5Impl(_1, _2, _3, _4, _5) {
+  this._1 = _1;
+  this._2 = _2;
+  this._3 = _3;
+  this._4 = _4;
+  this._5 = _5;
 }
 Tuple5Impl.prototype = _.extend(Object.create(Any.prototype), TProduct5);
 
 
 function Tuple6Impl(_1, _2, _3, _4, _5, _6) {
+  this._1 = _1;
+  this._2 = _2;
+  this._3 = _3;
+  this._4 = _4;
+  this._5 = _5;
+  this._6 = _6;
 }
 Tuple6Impl.prototype = _.extend(Object.create(Any.prototype), TProduct6);
 
 function Tuple7Impl(_1, _2, _3, _4, _5, _6, _7) {
+  this._1 = _1;
+  this._2 = _2;
+  this._3 = _3;
+  this._4 = _4;
+  this._5 = _5;
+  this._6 = _6;
+  this._7 = _7;
 }
 Tuple7Impl.prototype = _.extend(Object.create(Any.prototype), TProduct7);
 
 
 function Tuple8Impl(_1, _2, _3, _4, _5, _6, _7, _8) {
+  this._1 = _1;
+  this._2 = _2;
+  this._3 = _3;
+  this._4 = _4;
+  this._5 = _5;
+  this._6 = _6;
+  this._7 = _7;
+  this._8 = _8;
 }
 Tuple8Impl.prototype = _.extend(Object.create(Any.prototype), TProduct8);
 
 
 function Tuple9Impl(_1, _2, _3, _4, _5, _6, _7, _8, _9) {
+  this._1 = _1;
+  this._2 = _2;
+  this._3 = _3;
+  this._4 = _4;
+  this._5 = _5;
+  this._6 = _6;
+  this._7 = _7;
+  this._8 = _8;
+  this._9 = _9;
 }
 Tuple9Impl.prototype = _.extend(Object.create(Any.prototype), TProduct9);
 
 
 function Tuple10Impl(_1, _2, _3, _4, _5, _6, _7, _8, _9, _10) {
+  this._1 = _1;
+  this._2 = _2;
+  this._3 = _3;
+  this._4 = _4;
+  this._5 = _5;
+  this._6 = _6;
+  this._7 = _7;
+  this._8 = _8;
+  this._9 = _9;
+  this._10 = _10;
 }
 Tuple10Impl.prototype = _.extend(Object.create(Any.prototype), TProduct10);
 

@@ -456,11 +456,6 @@ NoneImpl.prototype = _.extend(Object.create(OptionImpl.prototype), {
  */
 var Option = caseClassify("Option", OptionImpl); // TODO: This is not a case class strictly speaking
 
-// TODO: Hack: Override case class create method. See TODO above..
-Option.create = function (x) {
-  return new OptionImpl(x);
-};
-
 /**
  * An Option factory which returns `None` in a manner consistent with
  * the collections hierarchy.

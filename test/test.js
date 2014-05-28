@@ -22,20 +22,56 @@ var printTime = helpers.printTime;
 
 var match = require('../dist/cjs/scalaish/helpers/match').match;
 
+var caseClassify = require('../dist/cjs/scalaish/helpers/caseClassify').caseClassify;
+
 var NUM = 100000;
 
 //println(Right(1));
+/*
 println(Right(1).swap());
 println(Right(1).swap().left().map(function (x) {
   return x + 1
 }));
+*/
 
-/*
 println("Create " + NUM + " JSObject instances:",
   time(function () {
     var x;
     for (var i = 0; i < NUM; i++) {
       x = {};
+    }
+  })
+);
+
+function IdImpl(id, name) {
+  this.id = id;
+  this.name = name;
+}
+
+/*
+Id.prototype = {
+  give: function() {
+    return this.id + this.name;
+  }
+};
+*/
+
+println("Create " + NUM + " JSObject instances with prototype:",
+  time(function () {
+    var x;
+    for (var i = 0; i < NUM; i++) {
+      x = new IdImpl(i, 'ASDF');
+    }
+  })
+);
+
+var Id = caseClassify("Id", IdImpl);
+
+println("Create " + NUM + " Case Class instances:",
+  time(function () {
+    var x;
+    for (var i = 0; i < NUM; i++) {
+      x = Id(i, 'ASDF');
     }
   })
 );
@@ -50,7 +86,6 @@ println("Map " + NUM + " Either instances:",
     }
   })
 );
-*/
 
 //import {Random} from '../util/Random';
 //import {T} from '../Product';
@@ -99,7 +134,6 @@ println(o.withFilter(function (x) {
 }).get() === 2);
 
 
-/*
 println("Map " + NUM + " Option instances:",
   time(function () {
     var x;
@@ -129,7 +163,6 @@ println("Create " + NUM + " Tuple instances:",
     }
   })
 );
-*/
 
 /*
  println(o.isInstanceOf("Some"));

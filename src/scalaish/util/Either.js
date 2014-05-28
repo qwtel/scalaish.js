@@ -26,7 +26,6 @@ function EitherImpl() {
 
 EitherImpl.prototype = _.extend(Object.create(Any.prototype), {
   Either: true,
-  companion: Either,
 
   // patching merge in here
   merge: function () {
@@ -86,8 +85,12 @@ EitherImpl.prototype = _.extend(Object.create(Any.prototype), {
    */
   swap: function () {
     return this.match()
-      .case(Left, Right)
-      .case(Right, Left)
+      .case(Left, function (a) {
+        return Right(a);
+      })
+      .case(Right, function (b) {
+        return Left(b);
+      })
       .get();
   },
 
@@ -113,7 +116,9 @@ EitherImpl.prototype = _.extend(Object.create(Any.prototype), {
    */
   joinRight: function () {
     return this.match()
-      .case(Left, Left)
+      .case(Left, function (a) {
+        return Left(a);
+      })
       .case(Right, pipe)
       .get()
   },
@@ -140,7 +145,9 @@ EitherImpl.prototype = _.extend(Object.create(Any.prototype), {
   joinLeft: function () {
     return this.match()
       .case(Left, pipe)
-      .case(Right, Right)
+      .case(Right, function (b) {
+        return Right(b);
+      })
       .get();
   },
 
@@ -161,8 +168,6 @@ function LeftImpl(a) {
 }
 
 LeftImpl.prototype = _.extend(Object.create(EitherImpl.prototype), {
-  Left: true,
-  companion: Left,
   isLeft: true,
   isRight: false
 });
@@ -179,8 +184,6 @@ function RightImpl(b) {
 }
 
 RightImpl.prototype = _.extend(Object.create(EitherImpl.prototype), {
-  Right: true,
-  companion: Right,
   isLeft: false,
   isRight: true
 });
@@ -233,26 +236,30 @@ LeftProjectionImpl.prototype = _.extend(Object.create(Any.prototype), {
   flatMap: function (f, context) {
     return this.e.match()
       .case(Left, f, context)
-      .case(Right, Right)
+      .case(Right, function (b) {
+        return Right(b);
+      })
       .get()
   },
 
   map: function (f, context) {
     return this.e.match()
       .case(Left, function (a) {
-        return Left(f.call(context, a))
+        return Left(f.call(context, a));
       })
-      .case(Right, Right)
+      .case(Right, function (b) {
+        return Right(b);
+      })
       .get()
   },
 
   filter: function (p, context) {
     return this.e.match()
       .case(Left, function (a) {
-        return p.call(context, a) ? Some(Left(a)) : None()
+        return p.call(context, a) ? Some(Left(a)) : None();
       })
       .case(Right, function () {
-        return None()
+        return None();
       })
       .get()
   },
@@ -263,9 +270,11 @@ LeftProjectionImpl.prototype = _.extend(Object.create(Any.prototype), {
 
   toOption: function () {
     return this.e.match()
-      .case(Left, Some)
+      .case(Left, function (a) {
+        return Some(a);
+      })
       .case(Right, function () {
-        return None()
+        return None();
       })
       .get()
   }
@@ -318,14 +327,18 @@ RightProjectionImpl.prototype = _.extend(Object.create(Any.prototype), {
 
   flatMap: function (f, context) {
     return this.e.match()
-      .case(Left, Left)
+      .case(Left, function (a) {
+        return Left(a);
+      })
       .case(Right, f, context)
       .get()
   },
 
   map: function (f, context) {
     return this.e.match()
-      .case(Left, Left)
+      .case(Left, function (a) {
+        return Left(a);
+      })
       .case(Right, function (b) {
         return Right(f.call(context, b))
       })
@@ -335,7 +348,7 @@ RightProjectionImpl.prototype = _.extend(Object.create(Any.prototype), {
   filter: function (p, context) {
     return this.e.match()
       .case(Left, function () {
-        return None()
+        return None();
       })
       .case(Right, function (b) {
         return p.call(context, b) ? Some(Right(b)) : None()
@@ -352,7 +365,9 @@ RightProjectionImpl.prototype = _.extend(Object.create(Any.prototype), {
       .case(Left, function () {
         return None()
       })
-      .case(Right, Some)
+      .case(Right, function (b) {
+        return Some(b)
+      })
       .get()
   }
 });
