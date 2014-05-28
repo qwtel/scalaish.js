@@ -28,30 +28,33 @@ function getArgumentNames(fn) {
   return res;
 }
 
-// TODO: this should be replaced by a iterator sometime
-function iterateOverValues(caseClass, argumentList, f, context) {
-  Array.prototype.forEach.call(argumentList, function (name) {
-    f.call(context, name, caseClass[name]);
-  });
+// TODO: should this be replaced by a iterator sometime?
+function iterateOverValues(caseClass, argumentNames, f, context) {
+  for (var i = 0; i < argumentNames.length; i++) {
+    var name = argumentNames[i];
+    f.call(context, name, caseClass[name], i);
+  }
 }
 
 /**
  * @param {String} name - the name of this case class
  * @param {Function} Impl - the constructor of the implementation of this case class (the one that get's invoked with 'new')
- * @param {Array.<String>=} argumentList - the names of the values of this case class. TODO: Better solution?
+ * @param {Array.<String>=} argumentNames - the names of the values of this case class. TODO: Better solution?
  * @return {Function} - factory function
  */
-function caseClassify(name, Impl, argumentList) {
+function caseClassify(name, Impl, argumentNames) {
 
-  argumentList = argumentList || getArgumentNames(Impl);
+  argumentNames = argumentNames || getArgumentNames(Impl);
 
   var Factory = function () {
     return Factory.create.apply(undefined, arguments);
   };
 
+  Factory._name = name;
+
   Factory.fromJSON = function (jsonObj) {
     var cc = new Impl();
-    Array.prototype.forEach.call(argumentList, function (n) {
+    Array.prototype.forEach.call(argumentNames, function (n) {
       cc[n] = jsonObj[n];
     });
     return cc;
@@ -64,7 +67,7 @@ function caseClassify(name, Impl, argumentList) {
 
   Factory.unCreate = function (caseClass) {
     var values = [];
-    iterateOverValues(caseClass, argumentList, function (n, v) {
+    iterateOverValues(caseClass, argumentNames, function (n, v) {
       values.push(v);
     });
     return values;
@@ -87,12 +90,12 @@ function caseClassify(name, Impl, argumentList) {
     },
 
     productArity: function () {
-      return argumentList.length;
+      return argumentNames.length;
     },
 
     productElement: function (n) {
-      if (n < argumentList.length) {
-        return this[argumentList[n]];
+      if (n < argumentNames.length) {
+        return this[argumentNames[n]];
       } else {
         throw new IndexOutOfBoundsException();
       }
@@ -127,8 +130,8 @@ function caseClassify(name, Impl, argumentList) {
       if (typeof other.Product !== 'undefined') {
         if (this.productArity() === other.productArity() && this.productArity() > 0) {
           var res = true;
-          iterateOverValues(this, argumentList, function (n, v) {
-            res = res && __equals(this[n], v);
+          iterateOverValues(this, argumentNames, function (n, v) {
+            res = res && __equals(v, other[n]);
           }, this);
           return res;
         }
@@ -137,8 +140,9 @@ function caseClassify(name, Impl, argumentList) {
       return false;
     },
 
-    hashCode: function (x) {
-      // TODO
+    hashCode: function () {
+      console.warn("hashCode implementation missing");
+      return -1;
     },
 
     /*
@@ -151,7 +155,7 @@ function caseClassify(name, Impl, argumentList) {
     // Hacky implementation, good enough for now
     toString: function () {
       var values = [];
-      iterateOverValues(this, argumentList, function (n, v) {
+      iterateOverValues(this, argumentNames, function (n, v) {
         values.push(v);
       });
       return name + '(' + values.join(',') + ')';
@@ -160,7 +164,7 @@ function caseClassify(name, Impl, argumentList) {
     // this isn't really required. JSON.stringify works anyway...
     toJSON: function () {
       var res = {};
-      iterateOverValues(this, argumentList, function (n, v) {
+      iterateOverValues(this, argumentNames, function (n, v) {
         res[n] = v;
       });
       return res;
@@ -181,10 +185,10 @@ function caseClassify(name, Impl, argumentList) {
 /**
  * @param {String} name - the name of this case class
  * @param {Function} Impl - the constructor of the implementation of this case object; Takes no arguments.
- * @param {Array.<String>=} argumentList - the names of the values of this case class. TODO: Better solution?
+ * @param {Array.<String>=} argumentNames - the names of the values of this case class. TODO: Better solution?
  */
-function caseObjectify(name, Impl, argumentList) {
-  var Factory = caseClassify(name, Impl, argumentList);
+function caseObjectify(name, Impl, argumentNames) {
+  var Factory = caseClassify(name, Impl, argumentNames);
 
   Factory.instance = new Impl();
 

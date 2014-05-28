@@ -55,7 +55,6 @@ function OptionImpl(x) {
 
 OptionImpl.prototype = _.extend(Object.create(Any.prototype), {
   Option: true,
-  companion: Option,
 
   /**
    * Returns true if the option is $none, false otherwise.
@@ -399,7 +398,6 @@ function SomeImpl(x) {
 
 SomeImpl.prototype = _.extend(Object.create(OptionImpl.prototype), {
   Some: true,
-  companion: Some,
 
   /**
    * Returns the option's value.
@@ -429,7 +427,6 @@ function NoneImpl() {
 
 NoneImpl.prototype = _.extend(Object.create(OptionImpl.prototype), {
   None: true,
-  companion: None,
 
   /**
    * Returns the option's value.
@@ -457,7 +454,7 @@ NoneImpl.prototype = _.extend(Object.create(OptionImpl.prototype), {
  * @param {A} x - the value
  * @return {OptionImpl.<A>} - Some(value) if value != null, None if value == null
  */
-var Option = caseClassify("Option", OptionImpl); // TODO: is this even necessary? what should it do?
+var Option = caseClassify("Option", OptionImpl); // TODO: This is not a case class strictly speaking
 
 /**
  * An Option factory which returns `None` in a manner consistent with

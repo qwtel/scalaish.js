@@ -15,10 +15,13 @@ var plusOne = function (x) {
 };
 
 println(o.map(plusOne));
-
 println(Some.unCreate(o.map(plusOne)));
 println(o.toJSON());
 println(o.copy({x: 3}));
+println(o.copy().equals(o));
 
 println(Option(1).equals(Some(1)));
 println(Option(1).isInstanceOf("Equals"));
+
+println(Option(null).isEmpty);
+println(Option(undefined).isInstanceOf('None'));

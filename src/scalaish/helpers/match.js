@@ -156,7 +156,7 @@ Match.prototype = {
  * @return {Case}
  */
 function match(o) {
-  if (typeof o.Any !== 'undefined') {
+  if (o.Any) {
     return new ScalaishCase(o);
   } else if (__isFunction(o)) {
     return new ConstructorCase(o);

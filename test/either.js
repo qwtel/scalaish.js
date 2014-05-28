@@ -28,8 +28,10 @@ var match = require('../dist/cjs/scalaish/helpers/match').match;
 
 var NUM = 100000;
 
-//println(Right(1));
-var l = Left(1).swap().right().get();
+println(Left(1).swap());
+var l = Left(1).swap().right().flatMap(function(x) {
+  return Left('a' + x);
+}).left().get();
 println(l);
 
 var tuple = T(1, 'a', 3, 4);

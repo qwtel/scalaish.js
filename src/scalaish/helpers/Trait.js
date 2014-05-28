@@ -18,4 +18,10 @@ Trait.compose = function() {
 
 Trait.override = Trait.compose;
 
+Trait.extend = function() {
+  var traits = Array.prototype.slice.call(arguments, 0);
+  traits.unshift({});
+  return _.extend.apply(undefined, traits);
+};
+
 export {Trait};
