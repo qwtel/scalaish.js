@@ -3,6 +3,7 @@ import {__result} from "../helpers/helpers";
 import {Any} from '../Any';
 import {NoSuchElementException} from '../Exceptions';
 import {Some, None} from '../Option';
+import {caseClassify} from '../helpers/caseClassify';
 
 function pipe(x) {
   return x;
@@ -39,14 +40,14 @@ EitherImpl.prototype = _.extend(Object.create(Any.prototype), {
    * Projects this `Either` as a `Left`.
    */
   left: function () {
-    return Either.LeftProjection(this)
+    return Either.LeftProjection(this);
   },
 
   /**
    * Projects this `Either` as a `Right`.
    */
   right: function () {
-    return Either.RightProjection(this)
+    return Either.RightProjection(this);
   },
 
   /**
@@ -156,7 +157,6 @@ EitherImpl.prototype = _.extend(Object.create(Any.prototype), {
  * @extends {EitherImpl}
  */
 function LeftImpl(a) {
-  EitherImpl.call(this)
   this.a = a;
 }
 
@@ -175,7 +175,6 @@ LeftImpl.prototype = _.extend(Object.create(EitherImpl.prototype), {
  * @extends {EitherImpl}
  */
 function RightImpl(b) {
-  EitherImpl.call(this)
   this.b = b;
 }
 
@@ -187,23 +186,15 @@ RightImpl.prototype = _.extend(Object.create(EitherImpl.prototype), {
 });
 
 function Either() {
-  // TODO
 }
-Either.apply = function () {
-  // TODO
-};
-
-Either.unapply = function (e) {
-  return e.isLeft ? Left.unapply(e) : Right.unapply(e)
-};
+caseClassify("Either", Either, EitherImpl);
 
 function LeftProjectionImpl(e) {
   this.e = e;
 }
 
 LeftProjectionImpl.prototype = _.extend(Object.create(Any.prototype), {
-  LeftProjection: true,
-  companion: Either.LeftProjection,
+  'Either.LeftProjection': true,
 
   get: function () {
     return this.e.match()
@@ -282,23 +273,17 @@ LeftProjectionImpl.prototype = _.extend(Object.create(Any.prototype), {
   }
 });
 
-Either.LeftProjection = function (e) {
-  return Either.LeftProjection.apply(e)
+Either.LeftProjection = function () {
+  return Either.LeftProjection.create.apply(undefined, arguments);
 };
-Either.LeftProjection.apply = function (e) {
-  return new LeftProjectionImpl(e)
-};
-Either.LeftProjection.unapply = function (leftProjecton) {
-  return leftProjecton.e;
-};
+caseClassify("Either.LeftProjection", Either.LeftProjection, LeftProjectionImpl);
 
 function RightProjectionImpl(e) {
   this.e = e;
 }
 
 RightProjectionImpl.prototype = _.extend(Object.create(Any.prototype), {
-  RightProjection: true,
-  companion: Either.RightProjection,
+  'Either.RightProjection': true,
 
   get: function () {
     return this.e.match()
@@ -346,7 +331,7 @@ RightProjectionImpl.prototype = _.extend(Object.create(Any.prototype), {
   map: function (f, context) {
     return this.e.match()
       .case(Left, Left)
-      .case(Right, function(b) {
+      .case(Right, function (b) {
         return Right(f.call(context, b))
       })
       .get()
@@ -354,10 +339,10 @@ RightProjectionImpl.prototype = _.extend(Object.create(Any.prototype), {
 
   filter: function (p, context) {
     return this.e.match()
-      .case(Left, function() {
+      .case(Left, function () {
         return None()
       })
-      .case(Right, function(b) {
+      .case(Right, function (b) {
         return p.call(context, b) ? Some(Right(b)) : None()
       })
       .get()
@@ -369,7 +354,7 @@ RightProjectionImpl.prototype = _.extend(Object.create(Any.prototype), {
 
   toOption: function () {
     return this.e.match()
-      .case(Left, function() {
+      .case(Left, function () {
         return None()
       })
       .case(Right, Some)
@@ -377,15 +362,10 @@ RightProjectionImpl.prototype = _.extend(Object.create(Any.prototype), {
   }
 });
 
-Either.RightProjection = function (e) {
-  return Either.RightProjection.apply(e)
+Either.RightProjection = function () {
+  return Either.RightProjection.create.apply(undefined, arguments);
 };
-Either.RightProjection.apply = function (e) {
-  return new RightProjectionImpl(e)
-};
-Either.RightProjection.unapply = function (rightProjection) {
-  return rightProjection.e;
-};
+caseClassify("Either.RightProjection", Either.RightProjection, RightProjectionImpl);
 
 /**
  * If the condition is satisfied, return the given `B` in `Right`,
@@ -398,28 +378,18 @@ Either.RightProjection.unapply = function (rightProjection) {
  * @return {EitherImpl}
  */
 Either.cond = function (test, right, left, context) {
-  return __result(test, context) ? Right(right) : Left(left)
+  return __result(test, context) ? Right(right) : Left(left);
 };
 
-function Left(a) {
-  return Left.apply(a);
+function Left() {
+  return Left.create.apply(undefined, arguments);
 }
-Left.apply = function (a) {
-  return new LeftImpl(a)
-};
-Left.unapply = function (either) {
-  return either.a;
-};
+caseClassify("Left", Left, LeftImpl);
 
-function Right(b) {
-  return Right.apply(b)
+function Right() {
+  return Right.create.apply(undefined, arguments);
 }
-Right.apply = function (b) {
-  return new RightImpl(b)
-};
-Right.unapply = function (either) {
-  return either.b;
-};
+caseClassify("Right", Right, RightImpl);
 
 export {Either, Left, Right};
 

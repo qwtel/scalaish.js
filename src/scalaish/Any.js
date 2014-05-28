@@ -13,14 +13,6 @@ Any.prototype = {
     } else {
       return this[Class] === true
     }
-  },
-
-  getClass: function () {
-    // TODO
-  },
-
-  match: function() {
-    return match(this)
   }
 };
 

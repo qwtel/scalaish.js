@@ -2,15 +2,16 @@ import {_} from 'underscore';
 import {Any} from '../Any';
 import {T} from '../Product'
 import {__result} from "../helpers/helpers";
+import {caseClassify} from "../helpers/caseClassify";
 import {Some, None} from '../Option';
 import {NoSuchElementException, UnsupportedOperationException} from '../Exceptions';
 
 function TryImpl(r, context) {
   try {
-    return Success(r, context)
+    return Success(r, context);
   } catch (e) {
     // TODO: NonFatal
-    return Failure(e)
+    return Failure(e);
   }
 }
 
@@ -58,22 +59,22 @@ TryImpl.prototype = _.extend(Object.create(Any.prototype), {
 
     WithFilter.prototype = {
       map: function (f, context) {
-        return self.filter(this.p, this.context).map(f, context)
+        return self.filter(this.p, this.context).map(f, context);
       },
       flatMap: function (f, context) {
-        return self.filter(this.p, this.context).flatMap(f, context)
+        return self.filter(this.p, this.context).flatMap(f, context);
       },
       foreach: function (f, context) {
-        return self.filter(this.p, this.context).foreach(f, context)
+        return self.filter(this.p, this.context).foreach(f, context);
       },
       withFilter: function (q, context) {
         return new WithFilter(function (x) {
-          return self.p.call(self.context, x) && q.call(context, x)
-        }, context)
+          return self.p.call(self.context, x) && q.call(context, x);
+        }, context);
       }
     };
 
-    return new WithFilter(p, context)
+    return new WithFilter(p, context);
   },
 
   recoverWith: null,
@@ -81,7 +82,7 @@ TryImpl.prototype = _.extend(Object.create(Any.prototype), {
   recover: null,
 
   toOption: function () {
-    return this.isSuccess ? Some(this.get()) : None()
+    return this.isSuccess ? Some(this.get()) : None();
   },
 
   flatten: null,
@@ -93,16 +94,16 @@ TryImpl.prototype = _.extend(Object.create(Any.prototype), {
       return this.match()
         .case(Success, s, context)
         .case(Failure, f, context)
-        .get()
+        .get();
     } catch (e) {
       // TODO: NonFatal
-      return Failure(e)
+      return Failure(e);
     }
   }
 });
 
-function SuccessImpl(v, context) {
-  this.value = __result(v, context);
+function SuccessImpl(value) {
+  this.value = __result(value);
 }
 
 SuccessImpl.prototype = _.extend(Object.create(TryImpl.prototype), {
@@ -116,46 +117,46 @@ SuccessImpl.prototype = _.extend(Object.create(TryImpl.prototype), {
   isSuccess: true,
 
   recoverWith: function () {
-    return this
+    return this;
   },
 
   get: function () {
-    return this.value
+    return this.value;
   },
 
   flatMap: function (f, context) {
     try {
-      return f.call(context, this.value)
+      return f.call(context, this.value);
     } catch (e) {
       // TODO: NonFatal
-      return Failure(e)
+      return Failure(e);
     }
   },
 
   flatten: function () {
-    return this.value
+    return this.value;
   },
 
   forEach: function (f, context) {
-    f.call(context, this.value)
+    f.call(context, this.value);
   },
 
   map: function (f, context) {
-    return Try(f.bind(context, this.value))
+    return Try(f.bind(context, this.value));
   },
 
   filter: function (p, context) {
     try {
       return p.call(context, this.value) ?
-        this : Failure(new NoSuchElementException("Predicate does not hold for " + this.value))
+        this : Failure(new NoSuchElementException("Predicate does not hold for " + this.value));
     } catch (e) {
       // TODO: NonFatal
-      return Failure(e)
+      return Failure(e);
     }
   },
 
   recover: function () {
-    return this
+    return this;
   },
 
   failed: function () {
@@ -163,8 +164,8 @@ SuccessImpl.prototype = _.extend(Object.create(TryImpl.prototype), {
   }
 });
 
-function FailureImpl(e) {
-  this.exception = e;
+function FailureImpl(exception) {
+  this.exception = exception;
 }
 
 FailureImpl.prototype = _.extend(Object.create(TryImpl.prototype), {
@@ -179,80 +180,63 @@ FailureImpl.prototype = _.extend(Object.create(TryImpl.prototype), {
 
   recoverWith: function (f, context) {
     try {
-      return (true /* TODO */) ? f.call(context, this.exception) : this
+      return (true /* TODO */) ? f.call(context, this.exception) : this;
     } catch (e) {
       // TODO: NonFatal
-      return Failure(e)
+      return Failure(e);
     }
   },
 
   get: function () {
-    throw this.exception
+    throw this.exception;
   },
 
   flatMap: function () {
-    return this
+    return this;
   },
 
   flatten: function () {
-    return this
+    return this;
   },
 
   forEach: function () {
   },
 
   map: function () {
-    return this
+    return this;
   },
 
   filter: function () {
-    return this
+    return this;
   },
 
   recover: function (rescueException, context) {
     try {
-      return (true /* TODO */) ? Try(rescueException.bind(context, this.exception)) : this
+      return (true /* TODO */) ? Try(rescueException.bind(context, this.exception)) : this;
     } catch (e) {
       // TODO: NonFatal
-      return Failure(e)
+      return Failure(e);
     }
   },
 
   failed: function () {
-    return Success(this.exception)
+    return Success(this.exception);
   }
 });
 
-function Try(r, context) {
-  return Try.apply(r, context)
+function Try() {
+  return Try.create.apply(undefined, arguments);
 }
-Try.apply = function (r, context) {
-  return new TryImpl(r, context);
-};
-Try.unapply = function (t) {
-  return t.isSuccess ?
-    Success.unapply(t) :
-    Failure.unapply(t)
-};
+caseClassify("Try", Try, TryImpl); // TODO: is this even necessary? what should it do?
 
-function Success(v, context) {
-  return Success.apply(v, context);
+function Success() {
+  return Success.create.apply(undefined, arguments);
 }
-Success.apply = function (v, context) {
-  return new SuccessImpl(v, context);
-};
-Success.unapply = function (s) {
-  return s.value;
-};
+caseClassify("Success", Success, SuccessImpl, ['value']);
 
-function Failure(e) {
-  return Failure.apply(e);
+function Failure() {
+  return Failure.create.apply(undefined, arguments);
 }
-Failure.apply = function (e) {
-  return new FailureImpl(e);
-};
-Failure.unapply = function (e) {
-  return e.exception;
-};
+caseClassify("Failure", Failure, FailureImpl, ['exception']);
 
 export {Try, Success, Failure};
