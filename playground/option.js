@@ -14,6 +14,8 @@ var plusOne = function (x) {
   return x + 1;
 };
 
+println(Some(null).get())
+
 println(o.map(plusOne));
 println(Some.unCreate(o.map(plusOne)));
 println(o.toJSON());
