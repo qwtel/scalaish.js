@@ -6,9 +6,9 @@ import {caseClassify} from "../helpers/caseClassify";
 import {Some, None} from '../Option';
 import {NoSuchElementException, UnsupportedOperationException} from '../Exceptions';
 
-function TryImpl(r, context) {
+function TryImpl(value) {
   try {
-    return Success(r, context);
+    return Success(value);
   } catch (e) {
     // TODO: NonFatal
     return Failure(e);
@@ -17,7 +17,6 @@ function TryImpl(r, context) {
 
 TryImpl.prototype = _.extend(Object.create(Any.prototype), {
   Try: true,
-  companion: Try,
 
   isFailure: null,
 
@@ -108,7 +107,6 @@ function SuccessImpl(value) {
 
 SuccessImpl.prototype = _.extend(Object.create(TryImpl.prototype), {
   Success: true,
-  companion: Success,
 
   value: null,
 
@@ -170,7 +168,6 @@ function FailureImpl(exception) {
 
 FailureImpl.prototype = _.extend(Object.create(TryImpl.prototype), {
   Failure: true,
-  companion: Failure,
 
   exception: null,
 
@@ -224,19 +221,8 @@ FailureImpl.prototype = _.extend(Object.create(TryImpl.prototype), {
   }
 });
 
-function Try() {
-  return Try.create.apply(undefined, arguments);
-}
-caseClassify("Try", Try, TryImpl); // TODO: is this even necessary? what should it do?
+var Try = caseClassify("Try", TryImpl);
+var Success = caseClassify("Success", SuccessImpl);
+var Failure = caseClassify("Failure", FailureImpl);
 
-function Success() {
-  return Success.create.apply(undefined, arguments);
-}
-caseClassify("Success", Success, SuccessImpl, ['value']);
-
-function Failure() {
-  return Failure.create.apply(undefined, arguments);
-}
-caseClassify("Failure", Failure, FailureImpl, ['exception']);
-
-export {Try, Success, Failure};
+export {Try, Success, Failure, TryImpl, SuccessImpl, FailureImpl};

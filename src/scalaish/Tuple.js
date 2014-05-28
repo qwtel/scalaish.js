@@ -54,26 +54,10 @@ Tuple4Impl.prototype = _.extend(Object.create(Any.prototype), TTuple4);
 
 // TODO: More tuples
 
-// TODO: Use 'arguments' and apply (js) when possible
-function Tuple1() {
-  return Tuple1.create.apply(undefined, arguments);
-}
-caseClassify("Tuple1", Tuple1, Tuple1Impl);
-
-function Tuple2() {
-  return Tuple2.create.apply(undefined, arguments);
-}
-caseClassify("Tuple2", Tuple2, Tuple2Impl);
-
-function Tuple3() {
-  return Tuple3.create.apply(undefined, arguments);
-}
-caseClassify("Tuple3", Tuple3, Tuple3Impl);
-
-function Tuple4() {
-  return Tuple4.create.apply(undefined, arguments);
-}
-caseClassify("Tuple4", Tuple4, Tuple4Impl);
+var Tuple1 = caseClassify("Tuple1", Tuple1Impl);
+var Tuple2 = caseClassify("Tuple2", Tuple2Impl);
+var Tuple3 = caseClassify("Tuple3", Tuple3Impl);
+var Tuple4 = caseClassify("Tuple4", Tuple4Impl);
 
 /**
  * Convenience "factory" function for Tuples
@@ -95,4 +79,8 @@ function T() {
   }
 }
 
-export {T, Tuple1, Tuple2, Tuple3, Tuple4, TTuple1, TTuple2, TTuple3, TTuple4};
+export {
+  TTuple1, TTuple2, TTuple3, TTuple4,
+  Tuple1Impl, Tuple2Impl, Tuple3Impl, Tuple4Impl,
+  Tuple1, Tuple2, Tuple3, Tuple4,
+  T};

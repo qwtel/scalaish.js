@@ -21,3 +21,4 @@ println(o.toJSON());
 println(o.copy({x: 3}));
 
 println(Option(1).equals(Some(1)));
+println(Option(1).isInstanceOf("Equals"));

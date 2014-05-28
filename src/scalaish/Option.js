@@ -457,10 +457,7 @@ NoneImpl.prototype = _.extend(Object.create(OptionImpl.prototype), {
  * @param {A} x - the value
  * @return {OptionImpl.<A>} - Some(value) if value != null, None if value == null
  */
-function Option() {
-  return Option.create.apply(undefined, arguments);
-}
-caseClassify("Option", Option, OptionImpl); // TODO: is this even necessary? what should it do?
+var Option = caseClassify("Option", OptionImpl); // TODO: is this even necessary? what should it do?
 
 /**
  * An Option factory which returns `None` in a manner consistent with
@@ -479,19 +476,13 @@ Option.empty = function () {
  * @template A
  * @return {SomeImpl.<A>}
  */
-function Some() {
-  return Some.create.apply(undefined, arguments);
-}
-caseClassify("Some", Some, SomeImpl, ['x']);
+var Some = caseClassify("Some", SomeImpl);
 
 /**
  * This case object represents non-existent values.
  * @return {NoneImpl}
  */
-function None() {
-  return None.create.apply(undefined, arguments);
-}
-caseObjectify("None", None, NoneImpl);
+var None = caseObjectify("None", NoneImpl);
 
-export {Option, Some, None};
+export {Option, Some, None, OptionImpl, SomeImpl, NoneImpl};
 

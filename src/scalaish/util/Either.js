@@ -185,9 +185,7 @@ RightImpl.prototype = _.extend(Object.create(EitherImpl.prototype), {
   isRight: true
 });
 
-function Either() {
-}
-caseClassify("Either", Either, EitherImpl);
+var Either = caseClassify("Either", EitherImpl);
 
 function LeftProjectionImpl(e) {
   this.e = e;
@@ -273,10 +271,7 @@ LeftProjectionImpl.prototype = _.extend(Object.create(Any.prototype), {
   }
 });
 
-Either.LeftProjection = function () {
-  return Either.LeftProjection.create.apply(undefined, arguments);
-};
-caseClassify("Either.LeftProjection", Either.LeftProjection, LeftProjectionImpl);
+Either.LeftProjection = caseClassify("Either.LeftProjection", LeftProjectionImpl);
 
 function RightProjectionImpl(e) {
   this.e = e;
@@ -362,10 +357,7 @@ RightProjectionImpl.prototype = _.extend(Object.create(Any.prototype), {
   }
 });
 
-Either.RightProjection = function () {
-  return Either.RightProjection.create.apply(undefined, arguments);
-};
-caseClassify("Either.RightProjection", Either.RightProjection, RightProjectionImpl);
+Either.RightProjection = caseClassify("Either.RightProjection", RightProjectionImpl);
 
 /**
  * If the condition is satisfied, return the given `B` in `Right`,
@@ -381,16 +373,9 @@ Either.cond = function (test, right, left, context) {
   return __result(test, context) ? Right(right) : Left(left);
 };
 
-function Left() {
-  return Left.create.apply(undefined, arguments);
-}
-caseClassify("Left", Left, LeftImpl);
+var Left = caseClassify("Left", LeftImpl);
+var Right = caseClassify("Right", RightImpl);
 
-function Right() {
-  return Right.create.apply(undefined, arguments);
-}
-caseClassify("Right", Right, RightImpl);
-
-export {Either, Left, Right};
+export {Either, Left, Right, EitherImpl, LeftImpl, RightImpl};
 
 
