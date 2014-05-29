@@ -2,7 +2,7 @@ import {Trait} from '../helpers/Trait';
 
 import {TSeqLike} from './SeqLike';
 
-var TLinearSeqLike_ = Trait("LinearSeqLike", {
+var TLinearSeqLike = Trait("LinearSeqLike").with(TSeqLike)({
   seq: Trait.required,
 
   hashCode: function () {
@@ -17,7 +17,5 @@ var TLinearSeqLike_ = Trait("LinearSeqLike", {
 
   }
 });
-
-var TLinearSeqLike = Trait.override(TLinearSeqLike_, TSeqLike);
 
 export {TLinearSeqLike};

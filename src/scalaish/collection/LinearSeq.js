@@ -3,13 +3,11 @@ import {Trait} from '../helpers/Trait';
 import {TSeq} from './Seq';
 import {TLinearSeqLike} from './LinearSeqLike';
 
-var TLinearSeq_ = Trait("LinearSeq", {
+var TLinearSeq = Trait("LinearSeq").with(TSeq).with(TLinearSeqLike)({
   seq: function () {
     return this;
   }
 });
-
-var TLinearSeq = Trait.override(TLinearSeq_, TLinearSeqLike, TSeq);
 
 export {TLinearSeq};
 

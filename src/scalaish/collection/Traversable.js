@@ -1,18 +1,17 @@
-import {_} from 'underscore';
-import {Any} from '../Any';
+import {Class} from '../helpers/Class';
 import {Trait} from '../helpers/Trait';
 
 import {TTraversableLike} from './TraversableLike';
 
-var TTraversable = Trait.compose(TTraversableLike, Trait("Traversable", {
+var TTraversable = Trait("Traversable").with(TTraversableLike)({
   // TODO: do i need this?
   seq: function () {
     return this;
   }
-}));
+});
 
 function AbstractTraversableImpl() {
 }
-AbstractTraversableImpl.prototype = _.extend(Object.create(Any.prototype), TTraversable);
+Class("AbstractTraversable", AbstractTraversableImpl).with(TTraversable)();
 
 export {TTraversable, AbstractTraversableImpl};

@@ -1,6 +1,6 @@
-import {_} from 'underscore';
-import {Any} from '../Any';
-import {T} from '../Product'
+import {Class} from '../helpers/Class';
+import {Trait} from '../helpers/Trait';
+//import {T} from '../Product'
 import {__result} from "../helpers/helpers";
 import {caseClassify} from "../helpers/caseClassify";
 import {Some, None} from '../Option';
@@ -15,20 +15,19 @@ function TryImpl(value) {
   }
 }
 
-TryImpl.prototype = _.extend(Object.create(Any.prototype), {
-  Try: true,
+Class("Try", TryImpl)({
 
-  isFailure: null,
+  isFailure: Trait.required,
 
-  isSuccess: null,
+  isSuccess: Trait.required,
 
   getOrElse: function (def, context) {
-    return this.isSuccess ? this.get() : __result(def, context);
+    return this.isSuccess() ? this.get() : __result(def, context);
   },
 
   orElse: function (def, context) {
     try {
-      return this.isSuccess ? this : __result(def, context);
+      return this.isSuccess() ? this : __result(def, context);
     }
     catch (e) {
       // TODO: NonFatal
@@ -87,7 +86,7 @@ TryImpl.prototype = _.extend(Object.create(Any.prototype), {
   recover: null,
 
   toOption: function () {
-    return this.isSuccess ? Some(this.get()) : None();
+    return this.isSuccess() ? Some(this.get()) : None();
   },
 
   flatten: null,
@@ -111,14 +110,15 @@ function SuccessImpl(value) {
   this.value = __result(value);
 }
 
-SuccessImpl.prototype = _.extend(Object.create(TryImpl.prototype), {
-  Success: true,
+Class("Success", SuccessImpl).extends(TryImpl)({
 
-  value: null,
+  isFailure: function () {
+    return false;
+  },
 
-  isFailure: false,
-
-  isSuccess: true,
+  isSuccess: function () {
+    return true;
+  },
 
   recoverWith: function () {
     return this;
@@ -172,14 +172,15 @@ function FailureImpl(exception) {
   this.exception = exception;
 }
 
-FailureImpl.prototype = _.extend(Object.create(TryImpl.prototype), {
-  Failure: true,
+Class("Failure", FailureImpl).extends(TryImpl)({
 
-  exception: null,
+  isFailure: function () {
+    return true;
+  },
 
-  isFailure: true,
-
-  isSuccess: false,
+  isSuccess: function () {
+    return false;
+  },
 
   recoverWith: function (f, context) {
     try {

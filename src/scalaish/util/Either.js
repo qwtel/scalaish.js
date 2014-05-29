@@ -1,6 +1,7 @@
-import {_} from 'underscore';
 import {__result} from "../helpers/helpers";
 import {Any} from '../Any';
+import {Class} from '../helpers/Class';
+import {Trait} from '../helpers/Trait';
 import {NoSuchElementException} from '../Exceptions';
 import {Some, None} from '../Option';
 import {caseClassify} from '../helpers/caseClassify';
@@ -24,8 +25,7 @@ function throwNoSuchElementEx(m) {
 function EitherImpl() {
 }
 
-EitherImpl.prototype = _.extend(Object.create(Any.prototype), {
-  Either: true,
+Class("Either", EitherImpl)({
 
   // patching merge in here
   merge: function () {
@@ -151,9 +151,8 @@ EitherImpl.prototype = _.extend(Object.create(Any.prototype), {
       .get();
   },
 
-  isLeft: null,
-
-  isRight: null
+  isLeft: Trait.required,
+  isRight: Trait.required
 });
 
 /**
@@ -167,9 +166,13 @@ function LeftImpl(a) {
   this.a = a;
 }
 
-LeftImpl.prototype = _.extend(Object.create(EitherImpl.prototype), {
-  isLeft: true,
-  isRight: false
+Class("Left", LeftImpl).extends(EitherImpl)({
+  isLeft: function () {
+    return true
+  },
+  isRight: function () {
+    return false
+  }
 });
 
 /**
@@ -183,9 +186,13 @@ function RightImpl(b) {
   this.b = b;
 }
 
-RightImpl.prototype = _.extend(Object.create(EitherImpl.prototype), {
-  isLeft: false,
-  isRight: true
+Class("Right", RightImpl).extends(EitherImpl)({
+  isLeft: function () {
+    return false
+  },
+  isRight: function () {
+    return true
+  }
 });
 
 var Either = caseClassify("Either", EitherImpl);
@@ -194,8 +201,7 @@ function LeftProjectionImpl(e) {
   this.e = e;
 }
 
-LeftProjectionImpl.prototype = _.extend(Object.create(Any.prototype), {
-  'Either.LeftProjection': true,
+Class("Either.LeftProjection", LeftProjectionImpl)({
 
   get: function () {
     return this.e.match()
@@ -286,8 +292,7 @@ function RightProjectionImpl(e) {
   this.e = e;
 }
 
-RightProjectionImpl.prototype = _.extend(Object.create(Any.prototype), {
-  'Either.RightProjection': true,
+Class("Either.RightProjection", RightProjectionImpl)({
 
   get: function () {
     return this.e.match()

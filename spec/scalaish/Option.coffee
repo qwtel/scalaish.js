@@ -31,7 +31,7 @@ describe 'A Option', ->
     expect(o.isInstanceOf('Product')).toBe(true)
     expect(o.isInstanceOf('Any')).toBe(true)
     expect(o.isInstanceOf('None')).toBe(false)
-    expect(o.isEmpty).toBe(false)
+    expect(o.isEmpty()).toBe(false)
     expect(o.isDefined()).toBe(true)
     expect(o.toString()).toBe("Some(1)")
 
@@ -40,7 +40,7 @@ describe 'A Option', ->
     expect(s.isInstanceOf(Some)).toBe(true)
 
     expect(n).toBeDefined()
-    expect(n.isEmpty).toBe(true)
+    expect(n.isEmpty()).toBe(true)
     expect(n.isInstanceOf(None)).toBe(true)
 
     expect(Option.empty()).toEqual(None())

@@ -1,4 +1,4 @@
-import {_} from 'underscore';
+import {Class} from '../../helpers/Class';
 import {Trait} from '../../helpers/Trait';
 import {caseClassify, caseObjectify} from '../../helpers/caseClassify';
 
@@ -9,25 +9,28 @@ import {TProduct} from '../../Product';
 // TODO: TODO: TODO
 function ListBufferImpl() {
 }
+
 ListBufferImpl.prototype.addAll = function () {
 };
 
 ListBufferImpl.prototype.prependToList = function () {
 };
 
-var TLinearSeqOptimized = {
-  // TODO
-};
+function ListImpl(xs) {
+  if (xs.toList) {
+    return xs.toList();
+  } else {
+    var res = Nil();
+    for (var i = arguments.length - 1; i >= 0; i--) {
+      if (arguments[i]) { // TODO: workaround to that 26 empty variable invokation in caseClassify
+        res = res.cons(arguments[i]);
+      }
+    }
+    return res;
+  }
+}
 
-var TSerializable = {
-  // TODO: Serializable in JS land means toJSON
-  // or create a trait 'JSONable' instead...
-};
-
-// PSEUDO TRAITS
-
-// TODO: List is not really a trait..
-var TList_ = Trait("List", {
+Class("List", ListImpl).extends(AbstractSeqImpl).with(TProduct).with(TLinearSeq)({
 
   /**
    * @type {Boolean}
@@ -58,6 +61,7 @@ var TList_ = Trait("List", {
     }
   },
 
+  /*
   reverseConsAll: function () {
 
   },
@@ -75,6 +79,7 @@ var TList_ = Trait("List", {
   append: function () {
     // TODO: ???
   },
+  */
 
   toList: function () {
     return this;
@@ -84,24 +89,25 @@ var TList_ = Trait("List", {
     var b = new ListBufferImpl();
     var i = 0;
     var these = this;
-    while (!these.isEmpty && i < n) {
+    while (!these.isEmpty() && i < n) {
       i++;
-      b.add(these.head);
-      these = these.tail;
+      b.add(these.head());
+      these = these.tail();
     }
-    return (these.isEmpty) ? this : b.toList();
+    return (these.isEmpty()) ? this : b.toList();
   },
 
   drop: function (n) {
     var these = this;
     var count = n;
-    while (!these.isEmpty && count > 0) {
-      these = these.tail;
+    while (!these.isEmpty() && count > 0) {
+      these = these.tail();
       count--;
     }
     return these;
   },
 
+  /*
   slice: function () {
 
   },
@@ -125,21 +131,22 @@ var TList_ = Trait("List", {
   span: function () {
 
   },
+  */
 
   forEach: function (f, context) {
     var these = this;
-    while (!these.isEmpty) {
-      f.call(context, these.head);
-      these = these.tail;
+    while (!these.isEmpty()) {
+      f.call(context, these.head());
+      these = these.tail();
     }
   },
 
   reverse: function () {
     var result = Nil();
     var these = this;
-    while (!these.isEmpty) {
-      result = result.cons(these.head);
-      these = these.tail;
+    while (!these.isEmpty()) {
+      result = result.cons(these.head());
+      these = these.tail();
     }
     return result;
   },
@@ -152,58 +159,62 @@ var TList_ = Trait("List", {
     }.bind(this);
   },
 
-  stringPrefix: 'List'
+  stringPrefix: 'List',
 
   // toStream
+
+  // HACK: This is in the companion obj in Scala
+  // TODO: More efficient impl, that is in line with the Scala impl
+  newBuilder: function () {
+    var res = [];
+    return {
+      addOne: function (x) {
+        res.push(x);
+      },
+      result: function () {
+        return List.apply(undefined, res);
+      }
+    }
+  }
 });
-
-// TODO: Correct Order?
-var TList = Trait.override(TList_, TLinearSeq, TProduct, TLinearSeqOptimized, TSerializable);
-
 
 // IMPLEMENTATIONS
 
-function ListImpl(xs) {
-  if (xs.toList) {
-    return xs.toList();
-  } else {
-    var res = Nil();
-    for (var i = arguments.length - 1; i >= 0; i--) {
-      res = res.cons(arguments[i]);
-    }
-    return res;
-  }
-}
-
-ListImpl.prototype = _.extend(Object.create(AbstractSeqImpl.prototype), TList);
 
 function NilImpl() {
 }
 
-NilImpl.prototype = _.extend(Object.create(ListImpl.prototype), {
-  isEmpty: Trait.required,
-  head: Trait.required, // TODO: make head and tail functions to throw exceptions here? performance?
-  tail: Trait.required, // TODO: make head and tail functions to throw exceptions here? performance?
+Class("Nil", NilImpl).extends(ListImpl)({
+  isEmpty: function () {
+    return true;
+  },
+  head: Trait.required, // TODO: throw somethign
+  tail: Trait.required, // TODO: throw somethin
 
   equals: function (that) {
     if (that.isInstanceOf("Seq")) {
-      return that.isEmpty;
+      return that.isEmpty();
     }
     return false;
   }
 });
 
 function ConsImpl(head, tail) {
-  this.head = head;
-  this.tail = tail;
+  this.head = function () {
+    return head;
+  };
+  this.tail = function () {
+    return tail;
+  };
 }
 
-ConsImpl.prototype = _.extend(Object.create(ListImpl.prototype), {
+Class("Cons", ConsImpl).extends(ListImpl)({
   head: Trait.required, // see constructor
   tail: Trait.required, // see constructor
-  isEmpty: false
+  isEmpty: function () {
+    return false;
+  }
 });
-
 
 // FACTORY METHODS
 
@@ -214,9 +225,11 @@ List.empty = function () {
 };
 
 // TODO: Can this be here?
+/*
 List.newBuilder = function () {
   return new ListBufferImpl();
 };
+*/
 
 var Cons = caseClassify("Cons", ConsImpl);
 var Nil = caseObjectify("Nil", NilImpl);

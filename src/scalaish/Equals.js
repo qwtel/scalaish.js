@@ -4,8 +4,7 @@ import {Trait} from "./helpers/Trait";
  * An interface containing operations for equality.
  * The only method not already present in class `AnyRef` is `canEqual`.
  */
-var TEquals = {
-  Equals: true,
+var TEquals = Trait("Equals")({
 
   /**
    * A method that should be called from every well-designed equals method
@@ -21,6 +20,6 @@ var TEquals = {
    * The universal equality method defined in `Object`.
    */
   equals: Trait.required
-};
+});
 
 export {TEquals};

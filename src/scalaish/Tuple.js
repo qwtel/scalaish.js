@@ -1,5 +1,5 @@
-import {_} from 'underscore';
-import {Any} from './Any';
+import {Class} from './helpers/Class';
+import {caseClassify} from './helpers/caseClassify';
 import {
   TProduct,
   TProduct1,
@@ -26,20 +26,17 @@ import {
   TProduct22
   } from './Product';
 
-import {caseClassify} from './helpers/caseClassify';
-
-
 function Tuple1Impl(_1) {
   this._1 = _1;
 }
-Tuple1Impl.prototype = _.extend(Object.create(Any.prototype), TProduct1);
+Class("Tuple1", Tuple1Impl).with(TProduct1)();
 
 
 function Tuple2Impl(_1, _2) {
   this._1 = _1;
   this._2 = _2;
 }
-Tuple2Impl.prototype = _.extend(Object.create(Any.prototype), TProduct2);
+Class("Tuple2", Tuple2Impl).with(TProduct2)();
 
 
 function Tuple3Impl(_1, _2, _3) {
@@ -47,7 +44,7 @@ function Tuple3Impl(_1, _2, _3) {
   this._2 = _2;
   this._3 = _3;
 }
-Tuple3Impl.prototype = _.extend(Object.create(Any.prototype), TProduct3);
+Class("Tuple3", Tuple3Impl).with(TProduct3)();
 
 
 function Tuple4Impl(_1, _2, _3, _4) {
@@ -56,7 +53,7 @@ function Tuple4Impl(_1, _2, _3, _4) {
   this._3 = _3;
   this._4 = _4;
 }
-Tuple4Impl.prototype = _.extend(Object.create(Any.prototype), TProduct4);
+Class("Tuple4", Tuple4Impl).with(TProduct4)();
 
 
 function Tuple5Impl(_1, _2, _3, _4, _5) {
@@ -66,7 +63,7 @@ function Tuple5Impl(_1, _2, _3, _4, _5) {
   this._4 = _4;
   this._5 = _5;
 }
-Tuple5Impl.prototype = _.extend(Object.create(Any.prototype), TProduct5);
+Class("Tuple5", Tuple5Impl).with(TProduct5)();
 
 
 function Tuple6Impl(_1, _2, _3, _4, _5, _6) {
@@ -77,7 +74,7 @@ function Tuple6Impl(_1, _2, _3, _4, _5, _6) {
   this._5 = _5;
   this._6 = _6;
 }
-Tuple6Impl.prototype = _.extend(Object.create(Any.prototype), TProduct6);
+Class("Tuple6", Tuple6Impl).with(TProduct6)();
 
 function Tuple7Impl(_1, _2, _3, _4, _5, _6, _7) {
   this._1 = _1;
@@ -88,7 +85,7 @@ function Tuple7Impl(_1, _2, _3, _4, _5, _6, _7) {
   this._6 = _6;
   this._7 = _7;
 }
-Tuple7Impl.prototype = _.extend(Object.create(Any.prototype), TProduct7);
+Class("Tuple7", Tuple7Impl).with(TProduct7)();
 
 
 function Tuple8Impl(_1, _2, _3, _4, _5, _6, _7, _8) {
@@ -101,7 +98,7 @@ function Tuple8Impl(_1, _2, _3, _4, _5, _6, _7, _8) {
   this._7 = _7;
   this._8 = _8;
 }
-Tuple8Impl.prototype = _.extend(Object.create(Any.prototype), TProduct8);
+Class("Tuple8", Tuple8Impl).with(TProduct8)();
 
 
 function Tuple9Impl(_1, _2, _3, _4, _5, _6, _7, _8, _9) {
@@ -115,7 +112,7 @@ function Tuple9Impl(_1, _2, _3, _4, _5, _6, _7, _8, _9) {
   this._8 = _8;
   this._9 = _9;
 }
-Tuple9Impl.prototype = _.extend(Object.create(Any.prototype), TProduct9);
+Class("Tuple9", Tuple9Impl).with(TProduct9)();
 
 
 function Tuple10Impl(_1, _2, _3, _4, _5, _6, _7, _8, _9, _10) {
@@ -130,7 +127,7 @@ function Tuple10Impl(_1, _2, _3, _4, _5, _6, _7, _8, _9, _10) {
   this._9 = _9;
   this._10 = _10;
 }
-Tuple10Impl.prototype = _.extend(Object.create(Any.prototype), TProduct10);
+Class("Tuple10", Tuple10Impl).with(TProduct10)();
 
 // TODO: More tuples
 

@@ -1,6 +1,6 @@
 import {Trait} from '../../helpers/Trait';
 
-var TGrowable = Trait("Growable", {
+var TGrowable = Trait("Growable")({
 
   addOne: Trait.required,
 

@@ -1,8 +1,8 @@
 import {_} from 'underscore';
-//import {T} from '../Tuple';
-import {Any} from '../Any';
+import {Class} from '../helpers/Class';
 import {Trait} from '../helpers/Trait';
 import {TTraversableOnce} from './TraversableOnce';
+//import {T} from '../Tuple';
 import {__equals} from '../helpers/helpers';
 
 var TBufferedIterator = {
@@ -12,7 +12,7 @@ var TBufferedIterator = {
 // TODO: well..
 var IntMaxValue = 320000;
 
-var TIterator = Trait.extend(TTraversableOnce, Trait("Iterator", {
+var TIterator = Trait("Iterator").with(TTraversableOnce)({
   seq: function () {
     return this;
   },
@@ -403,14 +403,13 @@ var TIterator = Trait.extend(TTraversableOnce, Trait("Iterator", {
   toString: function () {
     return (this.hasNext() ? "non-empty" : "empty") + " iterator";
   }
-}));
+});
 
 function Iterator() {
 }
 
 function AbstractIteratorImpl() {
 }
+Class("AbstractIterator", AbstractIteratorImpl).with(TIterator);
 
-AbstractIteratorImpl.prototype = _.extend(Object.create(Any.prototype), TIterator);
-
-export {AbstractIteratorImpl};
+export {TIterator, AbstractIteratorImpl};

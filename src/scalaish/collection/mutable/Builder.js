@@ -2,7 +2,7 @@ import {Trait} from '../../helpers/Trait';
 
 import {TGrowable} from '../generic/Growable';
 
-var TBuilder_ = Trait("Builder", {
+var TBuilder = Trait("Builder").with(TGrowable)({
 
   addOne: Trait.required,
 
@@ -38,7 +38,5 @@ var TBuilder_ = Trait("Builder", {
 
   // TODO: mapResult
 });
-
-var TBuilder = Trait.compose(TBuilder_, TGrowable);
 
 export {TBuilder};

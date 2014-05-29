@@ -1,4 +1,3 @@
-import {_} from 'underscore';
 import {Any} from './Any';
 import {IndexOutOfBoundsException} from "./Exceptions";
 import {TEquals} from './Equals';
@@ -11,7 +10,7 @@ import {AbstractIteratorImpl} from './collection/Iterator';
  * their subclasses [[scala.Tuple1]] through [[scala.Tuple22]].  In addition,
  * all case classes implement `Product` with synthetically generated methods.
  */
-var TProduct = Trait.extend(TEquals, Trait("Product", {
+var TProduct = Trait("Product").with(TEquals)({
 
   /**
    * The n^th^ element of this product, 0-based.  In other words, for a
@@ -64,22 +63,22 @@ var TProduct = Trait.extend(TEquals, Trait("Product", {
    */
   productPrefix: ''
 
-}));
+});
 
-var TProduct1 = Trait.extend(TProduct, Trait("Product1", {
+var TProduct1 = Trait("Product1").with(TProduct)({
   productArity: 1,
 
   _1: Trait.required
-}));
+});
 
-var TProduct2 = Trait.extend(TProduct, Trait("Product2", {
+var TProduct2 = Trait("Product2").with(TProduct)({
   Product2: true,
 
   productArity: 2,
 
   _1: Trait.required,
   _2: Trait.required
-}));
+});
 
 function createProduct(n) {
   var obj = {
@@ -90,7 +89,7 @@ function createProduct(n) {
     obj['_' + i] = Trait.required;
   }
 
-  return Trait.extend(TProduct, Trait("Product" + n, obj));
+  return Trait("Product" + n).with(TProduct)(obj);
 }
 
 var TProduct3 = createProduct(3);

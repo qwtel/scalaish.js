@@ -2,7 +2,7 @@ import {Trait} from '../helpers/Trait';
 
 import {TIterableLike} from './IterableLike';
 
-var TSeqLike_ = Trait("SeqLike", {
+var TSeqLike = Trait("SeqLike").with(TIterableLike)({
   length: Trait.required,
 
   apply: Trait.required,
@@ -65,6 +65,7 @@ var TSeqLike_ = Trait("SeqLike", {
     return -1;
   },
 
+  /*
   lastIndexWhere: function(p, end) {
     // TODO
   },
@@ -180,6 +181,7 @@ var TSeqLike_ = Trait("SeqLike", {
   indices: function () {
 
   }
+  */
 
   // view
 
@@ -193,8 +195,6 @@ function PermutationsItr() {
 function CombinationsItr() {
 }
 //CombinationsItr.prototype = Object.create(AbstractIterator.prototype);
-
-var TSeqLike = Trait.override(TSeqLike_, TIterableLike);
 
 export {TSeqLike};
 

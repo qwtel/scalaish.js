@@ -93,4 +93,28 @@ function __equals(o1, o2) {
   }
 }
 
-export {__extends, __isConstructor, __isFunction, __result, __clone, __equals, println, time, printTime};
+/**
+ * Surprisingly awesome wrapper function.
+ * Turns an object into a function that will call the original object `constructor` function when invoked.
+ * Still has all the properties of the original properties of the object though.
+ *
+ * @param {Object} target
+ * @return {Function}
+ */
+function __wrap(target) {
+  var result = function () {
+    return target.constructor.apply(target, arguments);
+  };
+
+  for (var key in target) {
+    if (typeof key === 'function') {
+      result[key] = target[key].bind(target);
+    } else {
+      result[key] = target[key];
+    }
+  }
+
+  return result;
+}
+
+export {__extends, __isConstructor, __isFunction, __result, __clone, __equals, __wrap, println, time, printTime};

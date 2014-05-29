@@ -1,8 +1,7 @@
 import {Trait} from '../helpers/Trait';
-
 import {TTraversableLike} from './TraversableLike';
 
-var TIterableLike = Trait.extend(TTraversableLike, Trait("IterableLike", {
+var TIterableLike = Trait("IterableLike").with(TTraversableLike)({
 
   iterator: Trait.required,
 
@@ -42,32 +41,26 @@ var TIterableLike = Trait.extend(TTraversableLike, Trait("IterableLike", {
 
   head: function () {
     return this.iterator.next();
-  },
+  }
 
   /**
    * @param {Number} frm
    * @param {Number} until
    * @override
    */
-  slice: function (frm, until) {
-
-  },
+  //slice: function (frm, until) {  },
 
   /**
    * @param {Number} n
    * @override
    */
-  take: function (n) {
-
-  },
+  //take: function (n) {  },
 
   /**
    * @param {Number} n
    * @override
    */
-  drop: function (n) {
-
-  },
+  //drop: function (n) {  },
 
   /**
    * @template A
@@ -75,17 +68,13 @@ var TIterableLike = Trait.extend(TTraversableLike, Trait("IterableLike", {
    * @override
    * @return {Repr}
    */
-  takeWhile: function (p) {
-
-  },
+  //takeWhile: function (p) {  },
 
   /**
    * @param {Number} size - the number of elements per group
    * @return {Iterator.<Repr>} -
    */
-  grouped: function (size) {
-
-  },
+  //grouped: function (size) {  },
 
   /**
    *
@@ -93,17 +82,11 @@ var TIterableLike = Trait.extend(TTraversableLike, Trait("IterableLike", {
    * @param {Number=} step -
    * @return {Iterator.<Repr>} -
    */
-  sliding: function (size, step) {
-    step = step || 1;
-  },
+  //sliding: function (size, step) { step = step || 1; },
 
-  takeRight: function (n) {
+  //takeRight: function (n) {  },
 
-  },
-
-  dropRight: function (n) {
-
-  },
+  //dropRight: function (n) {  },
 
   /**
    * @template A, B
@@ -112,31 +95,21 @@ var TIterableLike = Trait.extend(TTraversableLike, Trait("IterableLike", {
    * @param {Number} start
    * @param {Number} len
    */
-  copyToArray: function (xs, start, len) {
+  //copyToArray: function (xs, start, len) {  },
 
-  },
+  //zip: function (that) {  },
 
-  zip: function (that) {
+  //zipAll: function () {  },
 
-  },
+  //zipWithIndex: function () {  },
 
-  zipAll: function () {
-
-  },
-
-  zipWithIndex: function () {
-
-  },
-
-  sameElements: function () {
-
-  }
+  //sameElements: function () {  }
 
   // TODO: toStream
 
   // TODO: canEqual
 
   // TODO: view
-}));
+});
 
 export {TIterableLike};

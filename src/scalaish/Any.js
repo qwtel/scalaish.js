@@ -1,6 +1,3 @@
-import {match} from './helpers/match';
-import {__isFunction} from './helpers/helpers';
-
 function Any() {
 }
 

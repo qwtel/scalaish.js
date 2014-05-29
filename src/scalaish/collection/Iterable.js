@@ -1,4 +1,4 @@
-import {_} from 'underscore';
+import {Class} from '../helpers/Class';
 import {Trait} from '../helpers/Trait';
 
 import {TTraversable} from './Traversable';
@@ -6,17 +6,15 @@ import {TIterableLike} from './IterableLike';
 
 import {AbstractTraversableImpl} from './Traversable';
 
-var TIterable = Trait.extend(TTraversable, TIterableLike, Trait("Iterable", {
+var TIterable = Trait("Iterable").with(TTraversable).with(TIterableLike)({
   // TODO: do i need this?
   seq: function () {
     return this;
   }
-}));
+});
 
 function AbstractIterableImpl() {
-
 }
-
-AbstractIterableImpl.prototype = _.extend(Object.create(AbstractTraversableImpl.prototype), TIterable);
+Class("AbstractIterable", AbstractIterableImpl).extends(AbstractTraversableImpl).with(TIterable)();
 
 export {TIterable, AbstractIterableImpl};

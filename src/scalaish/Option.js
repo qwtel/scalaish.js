@@ -1,4 +1,5 @@
-import {_} from 'underscore';
+import {Trait} from './helpers/Trait';
+import {Class} from './helpers/Class';
 import {__result, __equals} from "./helpers/helpers";
 import {caseClassify, caseObjectify} from './helpers/caseClassify';
 import {Any} from './Any';
@@ -53,20 +54,19 @@ function OptionImpl(x) {
   }
 }
 
-OptionImpl.prototype = _.extend(Object.create(Any.prototype), {
-  Option: true,
+Class("Option", OptionImpl)({
 
   /**
    * Returns true if the option is $none, false otherwise.
    */
-  isEmpty: undefined,
+  isEmpty: Trait.required,
 
   /**
    * Returns true if the option is an instance of $some, false otherwise.
    * @return {boolean}
    */
   isDefined: function () {
-    return !this.isEmpty;
+    return !this.isEmpty();
   },
 
   /**
@@ -91,7 +91,7 @@ OptionImpl.prototype = _.extend(Object.create(Any.prototype), {
    * @return {A}
    */
   getOrElse: function (def, context) {
-    if (this.isEmpty) {
+    if (this.isEmpty()) {
       return __result(def, context);
     } else {
       return this.get();
@@ -127,7 +127,7 @@ OptionImpl.prototype = _.extend(Object.create(Any.prototype), {
    * @see forEach
    */
   map: function (f, context) {
-    if (this.isEmpty) {
+    if (this.isEmpty()) {
       return None();
     } else {
       return Some(f.call(context, this.get()));
@@ -155,7 +155,7 @@ OptionImpl.prototype = _.extend(Object.create(Any.prototype), {
      * @return {B}
      */
     return function (f, context) {
-      if (this.isEmpty) {
+      if (this.isEmpty()) {
         return __result(ifEmpty, contextIfEmpty);
       } else {
         return f.call(context, this.get());
@@ -179,7 +179,7 @@ OptionImpl.prototype = _.extend(Object.create(Any.prototype), {
    * @see forEach
    */
   flatMap: function (f, context) {
-    if (this.isEmpty) {
+    if (this.isEmpty()) {
       return None();
     } else {
       return f.call(context, this.get());
@@ -187,7 +187,7 @@ OptionImpl.prototype = _.extend(Object.create(Any.prototype), {
   },
 
   flatten: function () {
-    if (this.isEmpty) {
+    if (this.isEmpty()) {
       return None();
     } else {
       return this.get();
@@ -204,7 +204,7 @@ OptionImpl.prototype = _.extend(Object.create(Any.prototype), {
    * @return {OptionImpl.<A>}
    */
   filter: function (p, context) {
-    if (this.isEmpty || p.call(context, this.get())) {
+    if (this.isEmpty() || p.call(context, this.get())) {
       return this;
     } else {
       return None();
@@ -221,7 +221,7 @@ OptionImpl.prototype = _.extend(Object.create(Any.prototype), {
    * @return {OptionImpl.<A>}
    */
   filterNot: function (p, context) {
-    if (this.isEmpty || !p.call(context, this.get())) {
+    if (this.isEmpty() || !p.call(context, this.get())) {
       return this;
     } else {
       return None();
@@ -277,7 +277,7 @@ OptionImpl.prototype = _.extend(Object.create(Any.prototype), {
    * determined by `===`) to `elem`, `false` otherwise.
    */
   contains: function (elem) {
-    return !this.isEmpty && __equals(this.get(), elem);
+    return !this.isEmpty() && __equals(this.get(), elem);
   },
 
   /**
@@ -291,7 +291,7 @@ OptionImpl.prototype = _.extend(Object.create(Any.prototype), {
    * @return {boolean}
    */
   exists: function (p, context) {
-    return !this.isEmpty && p.call(context, this.get());
+    return !this.isEmpty() && p.call(context, this.get());
   },
 
   /**
@@ -304,7 +304,7 @@ OptionImpl.prototype = _.extend(Object.create(Any.prototype), {
    * @return {boolean}
    */
   forAll: function (p, context) {
-    return this.isEmpty || p.call(context, this.get());
+    return this.isEmpty() || p.call(context, this.get());
   },
 
   /**
@@ -320,7 +320,7 @@ OptionImpl.prototype = _.extend(Object.create(Any.prototype), {
    * @see flatMap
    */
   forEach: function (f, context) {
-    if (!this.isEmpty) {
+    if (!this.isEmpty()) {
       return f.call(context, this.get());
     }
   },
@@ -337,7 +337,7 @@ OptionImpl.prototype = _.extend(Object.create(Any.prototype), {
    * @return {OptionImpl.<A>}
    */
   orElse: function (alternative, context) {
-    if (this.isEmpty) {
+    if (this.isEmpty()) {
       return __result(alternative, context);
     } else {
       return this;
@@ -362,7 +362,7 @@ OptionImpl.prototype = _.extend(Object.create(Any.prototype), {
    */
   /*
   toRight: function(left, context) {
-    return this.isEmpty ? Left(__result(left, context)) : Right(this.get());
+    return this.isEmpty() ? Left(__result(left, context)) : Right(this.get());
   },
   */
 
@@ -380,7 +380,7 @@ OptionImpl.prototype = _.extend(Object.create(Any.prototype), {
    */
   /*
   toLeft: function(right, context) {
-    return this.isEmpty ? Right(__result(right, context)) : Left(this.get());
+    return this.isEmpty() ? Right(__result(right, context)) : Left(this.get());
   }
   */
 });
@@ -395,8 +395,7 @@ function SomeImpl(x) {
   this.x = x;
 }
 
-SomeImpl.prototype = _.extend(Object.create(OptionImpl.prototype), {
-  Some: true,
+Class("Some", SomeImpl).extends(OptionImpl)({
 
   /**
    * Returns the option's value.
@@ -413,7 +412,9 @@ SomeImpl.prototype = _.extend(Object.create(OptionImpl.prototype), {
    * Returns true if the option is $none, false otherwise.
    * @type {boolean}
    */
-  isEmpty: false
+  isEmpty: function () {
+    return false;
+  }
 });
 
 /**
@@ -424,8 +425,7 @@ SomeImpl.prototype = _.extend(Object.create(OptionImpl.prototype), {
 function NoneImpl() {
 }
 
-NoneImpl.prototype = _.extend(Object.create(OptionImpl.prototype), {
-  None: true,
+Class("None", NoneImpl).extends(OptionImpl)({
 
   /**
    * Returns the option's value.
@@ -442,7 +442,9 @@ NoneImpl.prototype = _.extend(Object.create(OptionImpl.prototype), {
    * Returns true if the option is $none, false otherwise.
    * @type {boolean}
    */
-  isEmpty: true
+  isEmpty: function () {
+    return true;
+  }
 });
 
 /**

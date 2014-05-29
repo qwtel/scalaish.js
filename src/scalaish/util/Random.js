@@ -1,5 +1,4 @@
-import {_} from 'underscore';
-import {Any} from '../Any';
+import {Class} from '../helpers/Class';
 
 /**
  * http://stackoverflow.com/a/1527820/870615
@@ -23,8 +22,7 @@ function Random(random) {
   }
 }
 
-Random.prototype = _.extend(Object.create(Any.prototype), {
-  Random: true,
+Class("Random", Random)({
 
   random: Math.random,
 
