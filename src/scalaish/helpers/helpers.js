@@ -117,4 +117,8 @@ function __wrap(target) {
   return result;
 }
 
-export {__extends, __isConstructor, __isFunction, __result, __clone, __equals, __wrap, println, time, printTime};
+function __isArray(a) {
+  return _.isArray(a);
+}
+
+export {__extends, __isConstructor, __isFunction, __result, __clone, __equals, __wrap, __isArray, println, time, printTime};

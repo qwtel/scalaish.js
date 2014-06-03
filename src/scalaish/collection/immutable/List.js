@@ -1,6 +1,8 @@
 import {Class} from '../../helpers/Class';
 import {Trait} from '../../helpers/Trait';
 import {caseClassify, caseObjectify} from '../../helpers/caseClassify';
+import {__isArray} from '../../helpers/helpers';
+import {T} from '../../Tuple';
 
 import {AbstractSeqImpl} from '../Seq';
 import {TLinearSeq} from '../LinearSeq';
@@ -19,15 +21,18 @@ ListBufferImpl.prototype.prependToList = function () {
 function ListImpl(xs) {
   if (xs.toList) {
     return xs.toList();
+  } else if (__isArray(xs)) {
   } else {
-    var res = Nil();
-    for (var i = arguments.length - 1; i >= 0; i--) {
-      if (arguments[i]) { // TODO: workaround to that 26 empty variable invokation in caseClassify
-        res = res.cons(arguments[i]);
-      }
-    }
-    return res;
+    xs = arguments
   }
+
+  var res = Nil();
+  for (var i = xs.length - 1; i >= 0; i--) {
+    if (xs[i]) {
+      res = res.cons(xs[i]);
+    }
+  }
+  return res;
 }
 
 Class("List", ListImpl).extends(AbstractSeqImpl).with(TProduct).with(TLinearSeq)({
@@ -172,7 +177,13 @@ Class("List", ListImpl).extends(AbstractSeqImpl).with(TProduct).with(TLinearSeq)
         res.push(x);
       },
       result: function () {
-        return List.apply(undefined, res);
+        return List.call(undefined, res);
+      },
+      addAll: function (that) {
+        that.forEach(res.push.bind(res))
+      },
+      sizeHint: function () {
+
       }
     }
   }
