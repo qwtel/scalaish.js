@@ -1,19 +1,23 @@
 import {Trait} from '../../helpers/Trait';
 
-var TGrowable = Trait("Growable")({
+var TClearable = Trait("Clearable")({
+  clear: Trait.required
+});
 
-  addOne: Trait.required,
+var TGrowable = Trait("Growable").with(TClearable)({
+
+  addAndReturn: Trait.required,
 
   // TODO
-  addMore: function(elem1, elem2, elems) {
-    return this.addOne(elem1).addOne(elem2).addAll(Array.prototype.slice.call(arguments, 2))
+  addManyAndReturn: function(elem1, elem2, elems) {
+    return this.addAndReturn(elem1).addAndReturn(elem2).addAllAndReturn(Array.prototype.slice.call(arguments, 2))
   },
 
-  addAll: function(xs) {
+  addAllAndReturn: function(xs) {
     // TODO: loop for LinearSeq
     // https://github.com/scala/scala/blob/2.12.x/src/library/scala/collection/generic/Growable.scala
 
-    xs.forEach(this.addOne);
+    xs.forEach(this.add);
 
     return this;
   },

@@ -62,8 +62,14 @@ var __clone = function (obj) {
   return copy;
 };
 
-var println = function(x) {
-  console.log((x && x.toString) ? x.toString() : x);
+var println = function() {
+  var x;
+  var args = [];
+  for (var i = 0; i < arguments.length; i++) {
+    x = arguments[i];
+    args.push((x && x.toString) ? x.toString() : x);
+  }
+  console.log.apply(undefined, args);
 };
 
 function time(f, context) {

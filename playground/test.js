@@ -177,7 +177,7 @@ var rnd = new Random();
 var t = Try(maybeThrowAnEx).transform(function(v) {
   return Success(v + ' was a Success');
 }, function(e) {
-  return Success('Something went wrong ' + e)
+  return Success('Something went wrong ' + e + ' which is ok')
 }).forEach(println);
 
 //println(t instanceof Success);
@@ -266,7 +266,7 @@ println("Do " + NUM + " pattern matches:",
   })
 );
 
-println("Do " + NUM + " native switch-case:",
+println("Do " + NUM + " switch-case:",
   time(function () {
     var res2;
     for (var i = 0; i < NUM; i++) {

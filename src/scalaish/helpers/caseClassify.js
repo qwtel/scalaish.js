@@ -81,7 +81,7 @@ function caseClassify(name, Impl, argumentNames) {
     // TODO: Better name?
     __factory__: Factory,
 
-    // TODO: Serializable equavalent for JSONable?
+    // TODO: Serializable equivalent for JSONable?
     //Impl.prototype.JSONable: true,
 
     copy: function (patchObj) {
